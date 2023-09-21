@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "714216997153",
+    "project_id": "gotomamma1-af4ec",
+    "storage_bucket": "gotomamma1-af4ec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714216997153:android:9f769a9e4a1cf58acb7e60",
+        "android_client_info": {
+          "package_name": "com.gotomamma"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714216997153-d61iir2ljsskg11lbs7lkpffb8apl4ui.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gotomamma",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "714216997153-bc9818m4ddgdvl1hji2g09ql39hstc11.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkB-76f9j80uVJrC5Je1nMyrWniMvgNXY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714216997153-bc9818m4ddgdvl1hji2g09ql39hstc11.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
