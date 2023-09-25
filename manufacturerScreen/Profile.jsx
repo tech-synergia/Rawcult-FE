@@ -140,7 +140,7 @@ const Profile = ({navigation}) => {
           marginTop: 15,
           marginBottom: 10,
         }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('allOrders')}>
           <Ionicons name="reader" size={30} />
         </TouchableOpacity>
         <Text
@@ -166,21 +166,13 @@ const Profile = ({navigation}) => {
 
       <View
         style={{
-          height: 0.8,
-          width: '100%',
-          backgroundColor: '#dee0e3',
-          alignSelf: 'center',
-        }}
-      />
-      <View
-        style={{
           backgroundColor: '#f0f1f2',
           padding: 10,
           flexDirection: 'row',
           marginTop: 15,
           marginBottom: 10,
         }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('help')}>
           <MaterialCommunityIcons name="phone-in-talk" size={30} />
         </TouchableOpacity>
         <Text
@@ -211,7 +203,7 @@ const Profile = ({navigation}) => {
           marginTop: 15,
           marginBottom: 10,
         }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('privacy')}>
           <Ionicons name="shield-checkmark" size={30} />
         </TouchableOpacity>
         <Text
@@ -242,7 +234,7 @@ const Profile = ({navigation}) => {
           marginTop: 15,
           marginBottom: 10,
         }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('setting')}>
           <Ionicons name="settings" size={28} />
         </TouchableOpacity>
         <Text

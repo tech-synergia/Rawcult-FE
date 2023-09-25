@@ -209,10 +209,14 @@ const RetailerHomeScreen = () => {
             inactiveDotColor="#90A4AE"
           />
         </View> */}
-        {data ? (
+        {data?.length ? (
           <>
             <View
-              style={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+              }}>
               {data.map((item, index) => (
                 <ItemCard
                   key={index}

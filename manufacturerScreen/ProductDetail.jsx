@@ -92,7 +92,7 @@ const ProductInfo = ({navigation}) => {
   ];
   return (
     <View style={{marginTop: 15}}>
-      <TouchableOpacity onPress={() => navigation.navigate('ReatilerHome')}>
+      <TouchableOpacity onPress={() => navigation.navigate('MfHome')}>
         <Ionicons
           style={{marginLeft: 5}}
           name="arrow-back"

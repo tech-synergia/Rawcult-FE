@@ -311,55 +311,96 @@ const ProductDetail = ({navigation}) => {
             />
           )}
         </View>
+        {selectedSize ? (
+          <View
+            style={{flexDirection: 'row', alignSelf: 'center', marginTop: 20}}>
+            <View
+              style={{
+                backgroundColor: '#9373eb',
+                height: 60,
+                width: 165,
+                borderRadius: 10,
+                justifyContent: 'center',
+                marginLeft: 15,
+              }}>
+              <Text
+                style={{
+                  color: '#fff',
+                  textAlign: 'center',
+                  fontSize: 20,
+                  fontWeight: '700',
+                }}>
+                Add to Wishlist
+              </Text>
+            </View>
+            <View
+              style={{
+                backgroundColor: '#9373eb',
+                height: 60,
+                width: 165,
+                borderRadius: 10,
+                justifyContent: 'center',
+                marginLeft: 15,
+              }}>
+              <Text
+                style={{
+                  color: '#fff',
+                  textAlign: 'center',
+                  fontSize: 20,
+                  fontWeight: '700',
+                }}>
+                Buy Now
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <View
+            style={{flexDirection: 'row', alignSelf: 'center', marginTop: 180}}>
+            <TouchableOpacity onPress={() => navigation.navigate('Wishlist')}>
+              <View
+                style={{
+                  backgroundColor: '#9373eb',
+                  height: 60,
+                  width: 165,
+                  borderRadius: 10,
+                  justifyContent: 'center',
+                  marginLeft: 15,
+                }}>
+                <Text
+                  style={{
+                    color: '#fff',
+                    textAlign: 'center',
+                    fontSize: 20,
+                    fontWeight: '700',
+                  }}>
+                  Add to Wishlist
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('cart')}>
+              <View
+                style={{
+                  backgroundColor: '#9373eb',
+                  height: 60,
+                  width: 165,
+                  borderRadius: 10,
+                  justifyContent: 'center',
+                  marginLeft: 15,
+                }}>
+                <Text
+                  style={{
+                    color: '#fff',
+                    textAlign: 'center',
+                    fontSize: 20,
+                    fontWeight: '700',
+                  }}>
+                  Buy Now
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
-      <View style={{flexDirection: 'row', alignSelf: 'baseline'}}>
-        <View
-          style={{
-            backgroundColor: '#000',
-            height: 50,
-            width: 165,
-            borderRadius: 10,
-            justifyContent: 'center',
-            marginLeft: 30,
-          }}>
-          <Text
-            style={{
-              color: '#fff',
-              textAlign: 'center',
-              fontSize: 20,
-              fontWeight: '700',
-            }}>
-            Quantity:
-          </Text>
-          <Text
-            style={{
-              color: '#fff',
-              fontSize: 20,
-              fontWeight: '700',
-            }}>
-            Total Amount:
-          </Text>
-        </View>
-        <View
-          style={{
-            backgroundColor: '#000',
-            height: 50,
-            width: 165,
-            borderRadius: 10,
-            justifyContent: 'center',
-            marginLeft: 15,
-          }}>
-          <Text
-            style={{
-              color: '#fff',
-              textAlign: 'center',
-              fontSize: 20,
-              fontWeight: '700',
-            }}>
-            Buy Now
-          </Text>
-        </View>
-      </View>
     </View>
   );
 };

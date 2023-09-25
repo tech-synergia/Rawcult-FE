@@ -56,6 +56,7 @@ const LoginScreen = ({navigation}) => {
         'https://rawcult-be.vercel.app/auth/login',
         userData,
       );
+      console.log('first', response);
 
       if (response.status === 200) {
         const token = response.data.accessToken;
@@ -122,7 +123,7 @@ const LoginScreen = ({navigation}) => {
         Alert.alert('Error', 'Invalid credentials. Please try again.');
       }
     } catch (error) {
-      Alert.alert('Error', error.response.data.msg);
+      Alert.alert('Error', error?.response?.data?.msg);
     }
   };
 
@@ -242,10 +243,8 @@ const LoginScreen = ({navigation}) => {
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.loginButtonText} onPress={handleLogin}>
-          Login
-        </Text>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
       <View style={{display: 'flex', flexDirection: 'row'}}>
         <Text

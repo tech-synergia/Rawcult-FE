@@ -1,15 +1,10 @@
-import {View, Text} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from '../auth/LoginScreen';
 import {useNavigation} from '@react-navigation/native';
 import RegisterScreen from '../auth/RegisterScreen';
 import ForgetPassword from '../auth/ForgetPassword';
-import RetailerHomeScreen from '../home/RetailerHomeScreen';
-import ManufacturerHomeScreen from '../home/ManufacturerHomeScreen';
-import Categories from '../retailerScreen/Categories';
 import Cart from '../retailerScreen/Cart';
-import Profile from '../retailerScreen/Profile';
 import RetailerBottomTabNavigation from './RetailerBottomTabNavigation';
 import ManufacturorBottomTabNavigation from './ManufacturorBottomTabNavigation';
 import SplashScreen from '../screens/SplashScreen';
@@ -24,6 +19,13 @@ import WaitingApprovalScreen from '../screens/FormApproval';
 import ManufacturorForm from '../manufacturerScreen/ManufacturorForm';
 import PaymentOptions from '../retailerScreen/PaymentOptions';
 import WomenBottomWearScreen from '../screens/WomenBottomWearScreen';
+import AllOrders from '../manufacturerScreen/profile/AllOrders';
+import Setting from '../manufacturerScreen/profile/Settting';
+import AboutUs from '../screens/AboutUs';
+import HelpCenter from '../screens/HelpCenter';
+import PrivacyPolicy from '../screens/PrivacyPolicy';
+import MyOrders from '../retailerScreen/profile/MyOrders';
+import Settings from '../retailerScreen/profile/Settings';
 
 const Stack = createStackNavigator();
 const AuthNavigator = () => {
@@ -59,7 +61,13 @@ const AuthNavigator = () => {
       <Stack.Screen name="womenTop" component={WomenTopScreen} />
       <Stack.Screen name="womenBottom" component={WomenBottomWearScreen} />
       <Stack.Screen name="payment" component={PaymentOptions} />
-      <Stack.Screen name="cart" component={Cart} />
+      <Stack.Screen name="allOrders" component={AllOrders} />
+      <Stack.Screen name="myOrders" component={MyOrders} />
+      <Stack.Screen name="about" component={AboutUs} />
+      <Stack.Screen name="setting" component={Setting} />
+      <Stack.Screen name="settings" component={Settings} />
+      <Stack.Screen name="help" component={HelpCenter} />
+      <Stack.Screen name="privacy" component={PrivacyPolicy} />
     </Stack.Navigator>
   );
 };

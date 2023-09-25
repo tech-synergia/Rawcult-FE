@@ -10,8 +10,15 @@ import React, {useEffect, useState} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
+import {ActivityIndicator} from 'react-native';
 
-const ProductCard = ({image, product_name, product_price}) => {
+const ProductCard = ({
+  image,
+  product_name,
+  product_price,
+  stocks,
+  productId,
+}) => {
   const navigation = useNavigation();
   const [loginToken, setLOginToken] = useState('');
 
@@ -37,7 +44,8 @@ const ProductCard = ({image, product_name, product_price}) => {
         margin: 18,
       }}>
       {/* <Rating rating={5} totalStars={5} number={"(5.0)"} /> */}
-      <TouchableOpacity onPress={() => navigation.navigate('ProductInfo')}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ProductInfo', {id: productId})}>
         <Image
           style={{
             width: 120,
@@ -83,7 +91,7 @@ const ProductCard = ({image, product_name, product_price}) => {
             fontWeight: '400',
             color: '#341f4d',
           }}>
-          100 Unit
+          {stocks} Unit
         </Text>
       </View>
     </View>

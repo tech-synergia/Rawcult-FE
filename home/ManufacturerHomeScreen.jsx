@@ -8,27 +8,36 @@ import {
   ImageBackground,
   TouchableOpacity,
   Alert,
+  Modal,
 } from 'react-native';
 import React, {useRef, useState, useEffect} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Searchbar} from 'react-native-paper';
 import ProductCard from '../components/ProductCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {ActivityIndicator, MD2Colors} from 'react-native-paper';
 
 const ManufacturerHomeScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
   const [userInfo, setUserInfo] = useState('');
+  const [loginToken, setLOginToken] = useState('');
   let user;
-  (async () => {
-    user = await AsyncStorage.getItem('user');
-    const loggedUser = JSON.parse(user);
-    setUserInfo(loggedUser);
-    // console.log("njnjbjbjbjbj", getToken);
-  })();
-  const searchRef = useRef();
 
+  useEffect(() => {
+    (async () => {
+      const token = await AsyncStorage.getItem('acessToken');
+      setLOginToken(token);
+      user = await AsyncStorage.getItem('user');
+      const loggedUser = JSON.parse(user);
+      setUserInfo(loggedUser);
+      // console.log("njnjbjbjbjbj", getToken);
+    })();
+  }, []);
   const image1 = require('../assets/first.jpg');
   const image2 = require('../assets/image3.jpeg');
   const image3 = require('../assets/image2.jpeg');
@@ -38,23 +47,37 @@ const ManufacturerHomeScreen = ({navigation}) => {
   const image7 = require('../assets/third.jpg');
   const image8 = require('../assets/forth.jpg');
 
-  useEffect(() => {
-    fetch('https://fakestoreapi.com/products')
-      .then(res => res.json())
-      .then(response => {
-        console.log(response);
-        setData(response);
-        // setOldData(response);
-      });
-  }, []);
+  const id = userInfo?.userId;
 
-  const onSearch = text => {
-    let tempList = data.filter(item => {
-      return item?.title.toLowerCase().indexOf(text.toLowerCase());
-    });
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `https://rawcult-be.vercel.app/products/userProduct/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${loginToken}`,
+            'Content-Type': 'application/json', // Set the content type as per your API's requirements
+          },
+        },
+      ); // Replace with your API endpoint
+      if (response.status === 200) {
+        setData(response?.data?.products);
+      } else {
+        Alert.alert('Error');
+      }
+      // setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
+  console.log('daaa', data);
 
-  const onChangeSearch = query => setSearchQuery(query);
+  useEffect(() => {
+    if (!userInfo) {
+      return;
+    }
+    fetchData();
+  }, [userInfo]);
 
   const carouselData = [
     {
@@ -126,68 +149,134 @@ const ManufacturerHomeScreen = ({navigation}) => {
         <Searchbar
           style={{width: '88%'}}
           placeholder="Search your Products"
-          onChangeText={onChangeSearch}
+          // onChangeText={onChangeSearch}
           value={searchQuery}
         />
-        <Ionicons
-          style={{marginLeft: 5, marginTop: 10}}
-          name="options-outline"
-          size={30}
-          color="#615f5f"
-        />
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Ionicons
+            style={{marginLeft: 5, marginTop: 10}}
+            name="options-outline"
+            size={30}
+            color="#615f5f"
+          />
+        </TouchableOpacity>
       </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}>
+        <View
+          style={{
+            position: 'absolute',
+            height: 'auto',
+            bottom: 390,
+            borderColor: '#95359c',
+            borderRadius: 10,
+            width: '50%',
+            alignSelf: 'flex-end',
+            backgroundColor: '#fff',
+            marginRight: 5,
+          }}>
+          <TouchableOpacity
+            onPress={() => setModalVisible(false)}
+            style={{
+              alignItems: 'center',
+            }}>
+            <Text style={{fontSize: 16, alignSelf: 'flex-end'}}>
+              <Entypo name="cross" size={28} color={'grey'} />
+            </Text>
+          </TouchableOpacity>
+          <View>
+            <Text
+              style={{
+                fontSize: 20,
+                textAlign: 'center',
+                marginTop: -10,
+                color: '#000',
+              }}>
+              Sort By
+            </Text>
+            <View
+              style={{
+                height: 1,
+                width: '100%',
+                backgroundColor: '#dee0e3',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}
+            />
+          </View>
+
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: '500',
+              marginTop: 10,
+              marginBottom: 10,
+              marginLeft: 5,
+            }}>
+            Price--Low to High
+          </Text>
+          <View
+            style={{
+              height: 0.8,
+              width: '100%',
+              backgroundColor: '#dee0e3',
+              alignSelf: 'center',
+            }}
+          />
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: '500',
+              marginTop: 10,
+              marginBottom: 20,
+              marginLeft: 5,
+            }}>
+            Price--High to Low
+          </Text>
+          <View
+            style={{
+              height: 0.8,
+              width: '100%',
+              backgroundColor: '#dee0e3',
+              alignSelf: 'center',
+            }}
+          />
+        </View>
+      </Modal>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{marginBottom: 240}}>
-        <View style={{display: 'flex', flexDirection: 'row'}}>
-          <ProductCard
-            product_name={'T-Shirt'}
-            image={image1}
-            product_price={'999.00'}
-          />
-          <ProductCard
-            product_name={'Anarkali Suit'}
-            image={image2}
-            product_price={'345'}
-          />
-        </View>
-        <View style={{display: 'flex', flexDirection: 'row'}}>
-          <TouchableOpacity onPress={() => Alert.alert('200 Unit left')}>
-            <ProductCard
-              product_name={'Women Shirt'}
-              image={image3}
-              product_price={'345'}
-            />
-          </TouchableOpacity>
-          <ProductCard
-            product_name={'Men Suit'}
-            image={image4}
-            product_price={'345'}
-          />
-        </View>
-        <View style={{display: 'flex', flexDirection: 'row'}}>
-          <ProductCard
-            product_name={'Men Shirt'}
-            image={image5}
-            product_price={'345'}
-          />
-          <ProductCard
-            product_name={'T-Shirt'}
-            image={image6}
-            product_price={'345'}
-          />
-        </View>
-        <View style={{display: 'flex', flexDirection: 'row'}}>
-          <ProductCard
-            product_name={'T-Shirt'}
-            image={image7}
-            product_price={'345'}
-          />
-          <ProductCard
-            product_name={'T-Shirt'}
-            image={image8}
-            product_price={'345'}
-          />
+        <View style={{display: 'flex', flexDirection: 'row', marginBottom: 20}}>
+          {data?.length ? (
+            <>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                }}>
+                {data.map((item, index) => (
+                  <ProductCard
+                    key={index}
+                    product_name={item?.name}
+                    image={image2}
+                    product_price={item?.price}
+                    productId={item?._id}
+                    stocks={item?.stocks}
+                  />
+                ))}
+              </View>
+            </>
+          ) : (
+            <>
+              <ActivityIndicator animating={true} color={MD2Colors.red800} />
+            </>
+          )}
         </View>
       </ScrollView>
     </View>

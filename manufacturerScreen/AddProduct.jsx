@@ -25,7 +25,7 @@ const AddProduct = ({navigation}) => {
   const [stocks, setStocks] = useState(10);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [price, setPrice] = useState(100);
+  const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
   const [subCategory, setSubCategory] = useState('');
   const [sizeQuantity, setSizeQuantity] = useState('');
@@ -76,6 +76,7 @@ const AddProduct = ({navigation}) => {
   const [modal, setModal] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
   const [loginToken, setLOginToken] = useState('');
+  const [sizes, setSizes] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -90,25 +91,31 @@ const AddProduct = ({navigation}) => {
   };
 
   const Camera = <Entypo name="camera" size={30} color="#000" />;
-  const Camera1 = <Entypo name="camera" size={30} color="blue" />;
-  const gallery = <MaterialIcons name="perm-media" size={30} color="blue" />;
-  const close = <Entypo name="circle-with-cross" size={25} color="blue" />;
 
-  const handleInputChange = text => {
+  const handleStocksChange = text => {
     const numericValue = text.replace(/[^0-9]/g, '');
-    setQuantity(numericValue);
+    setStocks(numericValue);
+  };
+
+  const handlesizeQuantityChange = text => {
+    const numericValue = text.replace(/[^0-9]/g, '');
+    setSizeQuantity(numericValue);
   };
 
   const handleAddProduct = async () => {
     const productData = {
       name,
-      value,
-      subValue,
+      category,
+      subCategory,
       colors,
-      quantity,
+      // quantity,
       minQty,
+      sizes,
       description,
+      stocks: Number(stocks),
+      price,
     };
+    console.log('<<<<<>>>>>>>', productData);
 
     try {
       const response = await axios.post(
@@ -123,7 +130,10 @@ const AddProduct = ({navigation}) => {
       );
       if (response.status === 200 || 201) {
         // Show email verification alert
-        Alert.alert('Product Added');
+        Alert.alert('Product Added', 'You can see in Your Product list.', [
+          // { text: "OK", onPress: () => navigation.navigate("retailerForm") },
+          {text: 'OK', onPress: () => navigation.navigate('MfHome')},
+        ]);
       } else {
         // Show error message
         Alert.alert('Error', 'An error occurred during signup.');
@@ -132,6 +142,14 @@ const AddProduct = ({navigation}) => {
       Alert.alert('Error', error.response.data.msg);
     }
   };
+
+  const handleSizeQuantity = () => {
+    if (size && sizeQuantity) {
+      setSizes([...sizes, {size: size, quantity: Number(sizeQuantity)}]);
+    }
+  };
+
+  console.log('<<<>>>>', stocks, sizes);
 
   return (
     <SafeAreaView style={{marginBottom: 85, marginTop: 25}}>
@@ -206,11 +224,11 @@ const AddProduct = ({navigation}) => {
             valueField="value"
             placeholder={!isFocus ? 'Select Category' : 'Select One'}
             searchPlaceholder="Search..."
-            value={value}
+            value={category}
             onFocus={() => setIsFocus(true)}
             onBlur={() => setIsFocus(false)}
             onChange={item => {
-              setValue(item.value);
+              setCategory(item.value);
               setIsFocus(false);
             }}
           />
@@ -226,11 +244,11 @@ const AddProduct = ({navigation}) => {
             labelField="label"
             valueField="value"
             placeholder={!isFocus ? 'Select Sub Category' : 'Select One'}
-            value={subValue}
+            value={subCategory}
             onFocus={() => setIsFocus(true)}
             onBlur={() => setIsFocus(false)}
             onChange={item => {
-              setSubValue(item.value);
+              setSubCategory(item.value);
               setIsFocus(false);
             }}
           />
@@ -294,8 +312,29 @@ const AddProduct = ({navigation}) => {
               {/* {console.log("image", updatedImage)} */}
             </>
           )}
+          <Text style={styles.label}>Total Stocks:</Text>
+
+          <TextInput
+            style={{
+              width: '80%',
+              height: 50,
+              borderWidth: 1,
+              borderColor: '#74a1e8',
+              borderRadius: 10,
+              marginBottom: 15,
+              paddingHorizontal: 15,
+              fontSize: 16,
+              alignSelf: 'center',
+            }}
+            placeholder="Enter total stocks"
+            placeholderTextColor="#aaa"
+            autoCapitalize="none"
+            onChangeText={text => setStocks(text)}
+            value={stocks}
+          />
           <Text style={styles.label}>Sizes Available:</Text>
-          <View style={{flexDirection: 'row', alignSelf: 'center'}}>
+          <View
+            style={{flexDirection: 'row', alignSelf: 'center', marginLeft: 20}}>
             <Dropdown
               style={[styles.sizedropdown, isFocus && {borderColor: '#4075c9'}]}
               placeholderStyle={styles.placeholderStyle}
@@ -330,10 +369,31 @@ const AddProduct = ({navigation}) => {
               placeholder="Enter quantity"
               placeholderTextColor="#aaa"
               autoCapitalize="none"
-              onChangeText={text => setSizeQuantity(text)}
+              onChangeText={handlesizeQuantityChange}
               value={sizeQuantity}
             />
+            <TouchableOpacity onPress={handleSizeQuantity}>
+              <Ionicons
+                style={{marginTop: 10, marginLeft: 5}}
+                name="add-circle-outline"
+                size={30}
+                color={'#74a1e8'}
+              />
+            </TouchableOpacity>
+            {/* <Text>{sizeQuantityTotal}</Text> */}
           </View>
+          {sizes.map((item, index) => (
+            <View
+              key={index}
+              style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+              <Text style={{fontSize: 16, fontWeight: '700', color: '#000'}}>
+                Size:{item?.size}
+              </Text>
+              <Text style={{fontSize: 16, fontWeight: '700', color: '#000'}}>
+                Quantity:{item?.quantity}
+              </Text>
+            </View>
+          ))}
           <Text style={styles.label}>Colors Available:</Text>
           <DropDownPicker
             style={{
@@ -361,7 +421,7 @@ const AddProduct = ({navigation}) => {
             mode="BADGE"
             placeholderStyle={{color: '#acafb5', fontSize: 15}}
             dropDownContainerStyle={{
-              width: 314,
+              width: 328,
               marginLeft: 40,
               borderColor: '#74a1e8',
               borderRadius: 10,
@@ -383,8 +443,8 @@ const AddProduct = ({navigation}) => {
               alignSelf: 'center',
             }}
             placeholder="Enter Price"
-            onChangeText={handleInputChange}
-            value={quantity}
+            onChangeText={text => setPrice(text)}
+            value={price}
             placeholderTextColor="#aaa"
             autoCapitalize="none"
           />

@@ -115,7 +115,7 @@ const Profile = ({navigation}) => {
                 fontSize: 18,
                 fontWeight: '600',
               }}>
-              Pooja Rai
+              {userInfo?.name}
             </Text>
             <Text
               style={{
@@ -123,7 +123,7 @@ const Profile = ({navigation}) => {
                 fontWeight: '400',
                 color: 'grey',
               }}>
-              pooja.k@opensenselabs.com
+              {userInfo?.email}
             </Text>
           </View>
         ) : (
@@ -145,15 +145,6 @@ const Profile = ({navigation}) => {
             </TouchableOpacity>
           </View>
         )}
-
-        <TouchableOpacity>
-          <Ionicons
-            style={{marginLeft: 130, marginTop: 13}}
-            name="chevron-forward"
-            size={35}
-            color={'grey'}
-          />
-        </TouchableOpacity>
       </View>
       <View
         style={{
@@ -172,7 +163,7 @@ const Profile = ({navigation}) => {
             marginTop: 15,
             marginBottom: 10,
           }}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('myOrders')}>
             <Ionicons name="reader" size={30} />
           </TouchableOpacity>
           <Text
@@ -296,7 +287,7 @@ const Profile = ({navigation}) => {
             marginTop: 15,
             marginBottom: 10,
           }}>
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <TouchableOpacity onPress={() => navigation.navigate('Wishlist')}>
             <Ionicons name="heart" size={30} />
           </TouchableOpacity>
           <Text
@@ -418,7 +409,7 @@ const Profile = ({navigation}) => {
           marginTop: 15,
           marginBottom: 10,
         }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('about')}>
           <FontAwesome name="address-card" size={23} />
         </TouchableOpacity>
         <Text
@@ -449,7 +440,7 @@ const Profile = ({navigation}) => {
           marginTop: 15,
           marginBottom: 10,
         }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('help')}>
           <MaterialCommunityIcons name="phone-in-talk" size={30} />
         </TouchableOpacity>
         <Text
@@ -480,7 +471,7 @@ const Profile = ({navigation}) => {
           marginTop: 15,
           marginBottom: 10,
         }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('privacy')}>
           <Ionicons name="shield-checkmark" size={30} />
         </TouchableOpacity>
         <Text
@@ -512,7 +503,7 @@ const Profile = ({navigation}) => {
             marginTop: 15,
             marginBottom: 10,
           }}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('settings')}>
             <Ionicons name="settings" size={28} />
           </TouchableOpacity>
           <Text
