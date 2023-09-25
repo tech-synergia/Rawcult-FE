@@ -8,26 +8,97 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Linking,
 } from 'react-native';
 import React, {useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Dropdown} from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
-
-// import Carousel, {Pagination} from 'react-native-reanimated-carousel';
+import {ProgressBar, MD3Colors} from 'react-native-paper';
+import Table from '../components/Table';
 import SizeCard from '../components/SizeCard';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {useEffect} from 'react';
+import {useRoute} from '@react-navigation/native';
+import axios from 'axios';
+
 const ProductDetail = ({navigation}) => {
-  const totalQuantity = 100;
+  // const totalQuantity = 90;
   const [isFocus, setIsFocus] = useState(false);
-  const [size, setSize] = useState(null);
+  const [colorChart, setColorChart] = useState('white');
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(0); // Default quantity
   const [backgroundColor, setBackgroundColor] = useState('#fff');
   const [textColor, setTextColor] = useState('#000');
+  const [data, setData] = useState({});
+  const [sizes, setSizes] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [fixedQuantity, setFixedQuantity] = useState(10);
+  const [totalQuantity, setTotalQuantity] = useState(10);
   const [availablelQuantity, setAvailablelQuantityy] = useState(totalQuantity);
+  const [state, setState] = useState({
+    tableHead: ['Head1', 'Head2', 'Head3', 'Head4'],
+    tableData: [
+      ['1', '2', '3', '4'],
+      ['a', 'b', 'c', 'd'],
+      ['1', '2', '3', '456\n789'],
+      ['a', 'b', 'c', 'd'],
+    ],
+  });
+  const route = useRoute();
+  const {id: productId} = route.params;
+  console.log(
+    '🚀 ~ file: ProductDetail.jsx:45 ~ ProductDetail ~ productId:',
+    productId,
+  );
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `https://rawcult-be.vercel.app/products/id/${productId}`,
+      ); // Replace with your API endpoint
+      if (response.status === 200) {
+        const sizeArray = [];
+        let qty = 0;
+        console.log('resssss', response?.data?.product);
+        response.data.product.sizes.map(val => {
+          qty += val.quantity;
+          sizeArray.push({size: val.size, quantity: val.quantity});
+        });
+        console.log('qty', qty);
+        setTotalQuantity(qty);
+        setFixedQuantity(qty);
+        setSizes(sizeArray);
+        setData(response?.data?.product);
+      } else {
+        Alert.alert('Error');
+      }
+      // setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const images = [
+    require('../assets/first.jpg'),
+    require('../assets/second.jpg'),
+    require('../assets/third.jpg'),
+    require('../assets/forth.jpg'),
+    require('../assets/fifth.jpg'),
+  ];
+  const [image, setImages] = useState(images);
+
+  // Calculate the percentage of available quantity
+
+  const percentage = (availablelQuantity / fixedQuantity) * 100;
+
+  // Determine the color based on the percentage
+  const color = percentage < 10 ? 'red' : 'green';
 
   const increaseQuantity = () => {
     setQuantity(quantity + 1);
@@ -48,12 +119,32 @@ const ProductDetail = ({navigation}) => {
 
   useEffect(() => {
     console.log('QQQQ', quantity);
+    const selectedQuantity = tableData.reduce(
+      (acc, curr) => (acc += curr.quantity),
+      0,
+    );
+    setAvailablelQuantityy(
+      selectedQuantity <= 0 ? fixedQuantity : fixedQuantity - selectedQuantity,
+    );
+    console.log('>>>>>>>', selectedQuantity, fixedQuantity);
+  }, [tableData]);
 
-    setAvailablelQuantityy(totalQuantity - quantity);
-  }, [quantity]);
-
-  const handleSizeSelection = size => {
+  const handleSizeSelection = ({size, quantity}) => {
     setSelectedSize(size);
+    setTotalQuantity(totalQuantity - 1);
+    const newData = {size, color: colorChart, quantity: 1, price: data.price};
+    const index = tableData.findIndex(
+      item => item.size === size && item.color === colorChart,
+    );
+    if (index !== -1) {
+      setTableData(prev => {
+        const updatedData = [...prev];
+        updatedData[index] = {...updatedData[index], ...newData};
+        return updatedData;
+      });
+    } else {
+      setTableData(prev => [...prev, newData]);
+    }
     setQuantity(20);
     setBackgroundColor('#000');
     setTextColor('#fff');
@@ -67,13 +158,6 @@ const ProductDetail = ({navigation}) => {
     }
   };
 
-  const images = [
-    require('../assets/first.jpg'),
-    require('../assets/second.jpg'),
-    require('../assets/third.jpg'),
-    require('../assets/forth.jpg'),
-    require('../assets/fifth.jpg'),
-  ];
   const Colordata = [
     {label: 'Black', value: 'black'},
     {label: 'White', value: 'white'},
@@ -84,8 +168,11 @@ const ProductDetail = ({navigation}) => {
     {label: 'Multicolour', value: 'multicolour'},
     {label: 'Pink', value: 'pink'},
   ];
+
+  console.log('daaa', data);
+
   return (
-    <View style={{marginTop: 15}}>
+    <View style={{marginTop: 15, marginBottom: 40}}>
       <TouchableOpacity onPress={() => navigation.navigate('ReatilerHome')}>
         <Ionicons
           style={{marginLeft: 5}}
@@ -94,170 +181,184 @@ const ProductDetail = ({navigation}) => {
           color={'#14489c'}
         />
       </TouchableOpacity>
-      <ImageSlider
-        caroselImageStyle={{resizeMode: 'cover'}}
-        data={images}
-        autoPlay={false}
-        onItemChanged={item => console.log('item', item)}
-        closeIconColor="#000"
-      />
-      <View>
-        <Text style={{marginLeft: 10, fontWeight: '500'}}>
-          Red Tape Men Polo Collar Pure Cotton T-shirt
-        </Text>
-        <View style={{flexDirection: 'row'}}>
-          <Text
-            style={{
-              marginLeft: 10,
-              fontSize: 15,
-              fontWeight: '800',
-              marginTop: 5,
-            }}>
-            Total availablle:
+      <ScrollView>
+        <ImageSlider
+          caroselImageStyle={{resizeMode: 'cover'}}
+          data={images}
+          autoPlay={false}
+          onItemChanged={item => console.log('item', item)}
+          closeIconColor="#000"
+        />
+        <View>
+          <Text style={{marginLeft: 10, fontWeight: '500'}}>{data?.name}</Text>
+          <Text style={{marginLeft: 10, fontWeight: '500'}}>
+            {data?.description}
           </Text>
-          <Text
+          <ProgressBar
+            progress={percentage / 100} // Convert percentage to a value between 0 and 1
+            color={color}
             style={{
-              marginLeft: 3,
-              fontSize: 15,
-              fontWeight: '700',
-              marginTop: 5,
-              color: '#000',
-            }}>
-            {availablelQuantity}
-          </Text>
-        </View>
-        <Text
-          style={{
-            fontWeight: '700',
-            color: '#000',
-            marginTop: 5,
-            marginLeft: 12,
-            fontSize: 20,
-          }}>
-          <FontAwesome name="rupee" size={18} /> 1200
-        </Text>
-
-        <Text
-          style={{
-            marginLeft: 12,
-            marginTop: 15,
-            fontSize: 18,
-            fontWeight: '700',
-          }}>
-          Size:
-        </Text>
-
-        <View style={{flexDirection: 'row'}}>
-          <View
-            style={{
-              flexDirection: 'row',
+              height: 15,
+              borderRadius: 5,
+              width: '90%',
+              alignSelf: 'center',
               marginTop: 10,
-            }}>
-            <TouchableOpacity onPress={() => handleSizeSelection('XS')}>
-              <SizeCard
-                size={'XS'}
-                textColor={textColor}
-                backgroundColor={backgroundColor}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSizeSelection('S')}>
-              <SizeCard
-                size={'S'}
-                textColor={textColor}
-                backgroundColor={backgroundColor}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSizeSelection('M')}>
-              <SizeCard
-                size={'M'}
-                textColor={textColor}
-                backgroundColor={backgroundColor}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSizeSelection('L')}>
-              <SizeCard
-                size={'L'}
-                textColor={textColor}
-                backgroundColor={backgroundColor}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSizeSelection('XL')}>
-              <SizeCard
-                size={'XL'}
-                textColor={textColor}
-                backgroundColor={backgroundColor}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={{marginTop: -25}}>
+            }}
+          />
+          <View style={{flexDirection: 'row'}}>
             <Text
               style={{
-                marginLeft: 50,
-                fontSize: 18,
-                marginBottom: 10,
-                fontWeight: '700',
+                marginLeft: 25,
+                fontSize: 15,
+                fontWeight: '800',
+                marginTop: 5,
+                color: 'green',
               }}>
-              Color:
+              Total availablle:
             </Text>
-            <Dropdown
-              style={[styles.sizedropdown, isFocus && {borderColor: '#4075c9'}]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              data={Colordata}
-              maxHeight={200}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Select' : 'Select One'}
-              value={size}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              onChange={item => {
-                setSize(item.value);
-                setIsFocus(false);
-              }}
-            />
+            <Text
+              style={{
+                marginLeft: 3,
+                fontSize: 16,
+                fontWeight: 'bold',
+                marginTop: 5,
+                color: '#000',
+              }}>
+              {availablelQuantity}
+            </Text>
           </View>
-        </View>
-        {selectedSize && (
-          <View>
-            <View style={{flexDirection: 'row'}}>
+          <Text
+            style={{
+              fontWeight: '700',
+              color: '#000',
+              marginTop: 5,
+              marginLeft: 12,
+              fontSize: 20,
+            }}>
+            <FontAwesome name="rupee" size={18} /> {data?.price}
+          </Text>
+
+          <Text
+            style={{
+              marginLeft: 12,
+              marginTop: 15,
+              fontSize: 18,
+              fontWeight: '700',
+            }}>
+            Size:
+          </Text>
+
+          <View style={{flexDirection: 'row'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginTop: 10,
+              }}>
+              {sizes.map(val => (
+                <>
+                  <TouchableOpacity onPress={() => handleSizeSelection(val)}>
+                    <SizeCard
+                      size={val.size}
+                      textColor={textColor}
+                      backgroundColor={backgroundColor}
+                    />
+                  </TouchableOpacity>
+                </>
+              ))}
+            </View>
+
+            <View style={{marginTop: -25}}>
               <Text
                 style={{
-                  marginLeft: 15,
-                  fontSize: 16,
+                  marginLeft: 50,
+                  fontSize: 18,
+                  marginBottom: 10,
                   fontWeight: '700',
-                  marginBottom: 10,
                 }}>
-                Selected Size:
+                Color:
               </Text>
-              <Text
-                style={{
-                  marginLeft: 5,
-                  fontSize: 16,
-                  fontWeight: '900',
-                  marginBottom: 10,
-                  color: '#000',
-                }}>
-                {selectedSize}
-              </Text>
-            </View>
-            <View style={styles.container}>
-              <TouchableOpacity onPress={decreaseQuantity}>
-                <Ionicons
-                  name="remove-outline"
-                  size={24}
-                  color={quantity === 20 ? '#ccc' : '#000'}
-                />
-              </TouchableOpacity>
-              <Text style={styles.quantityText}>{quantity}</Text>
-              <TouchableOpacity onPress={increaseQuantity}>
-                <Ionicons name="add-outline" size={24} color="#000" />
-              </TouchableOpacity>
+              <Dropdown
+                style={[
+                  styles.sizedropdown,
+                  isFocus && {borderColor: '#4075c9'},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                data={Colordata}
+                maxHeight={200}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select' : 'Select One'}
+                value={colorChart}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={item => {
+                  setColorChart(item.value);
+                  setIsFocus(false);
+                }}
+              />
             </View>
           </View>
-        )}
+          {selectedSize && (
+            <Table
+              tableData={tableData}
+              setTotalQuantity={setTotalQuantity}
+              setTableData={setTableData}
+              colorChart={colorChart}
+              totalQuantity={totalQuantity}
+              sizes={sizes}
+            />
+          )}
+        </View>
+      </ScrollView>
+      <View style={{flexDirection: 'row', alignSelf: 'baseline'}}>
+        <View
+          style={{
+            backgroundColor: '#000',
+            height: 50,
+            width: 165,
+            borderRadius: 10,
+            justifyContent: 'center',
+            marginLeft: 30,
+          }}>
+          <Text
+            style={{
+              color: '#fff',
+              textAlign: 'center',
+              fontSize: 20,
+              fontWeight: '700',
+            }}>
+            Quantity:
+          </Text>
+          <Text
+            style={{
+              color: '#fff',
+              fontSize: 20,
+              fontWeight: '700',
+            }}>
+            Total Amount:
+          </Text>
+        </View>
+        <View
+          style={{
+            backgroundColor: '#000',
+            height: 50,
+            width: 165,
+            borderRadius: 10,
+            justifyContent: 'center',
+            marginLeft: 15,
+          }}>
+          <Text
+            style={{
+              color: '#fff',
+              textAlign: 'center',
+              fontSize: 20,
+              fontWeight: '700',
+            }}>
+            Buy Now
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -330,4 +431,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  tableContainer: {
+    flex: 1,
+    padding: 16,
+    paddingTop: 30,
+    backgroundColor: '#fff',
+  },
+  head: {height: 40, backgroundColor: '#f1f8ff'},
+  text: {margin: 6},
 });

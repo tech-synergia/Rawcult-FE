@@ -5,10 +5,11 @@ import {
   useWindowDimensions,
   StyleSheet,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import ProductTypeCard from '../components/ProductTypeCard';
-
+import {useNavigation} from '@react-navigation/native';
 const womenBottom = require('../assets/womenBottom.webp');
 const womenTop = require('../assets/image2.jpeg');
 const womenCasual = require('../assets/womenCasual.webp');
@@ -26,28 +27,35 @@ const womenAccess = require('../assets/womenAcess.webp');
 const kidsAcess = require('../assets/kidsAcess.jpeg');
 const kidsShoe = require('../assets/kidsShoe.jpeg');
 
-const FirstRoute = () => (
-  <>
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-      }}>
-      <ProductTypeCard image={womenTop} product_name={'Top Wear'} />
-      <ProductTypeCard image={womenBottom} product_name={'Bottom Wear'} />
-    </View>
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-      }}>
-      <ProductTypeCard image={womenCasual} product_name={'Casual Wear'} />
-      <ProductTypeCard image={womenFormal} product_name={'Formal Wear'} />
-    </View>
-  </>
-);
+const FirstRoute = () => {
+  const navigation = useNavigation();
+  return (
+    <>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+        }}>
+        <TouchableOpacity onPress={() => navigation.navigate('womenTop')}>
+          <ProductTypeCard image={womenTop} product_name={'Top Wear'} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('womenBottom')}>
+          <ProductTypeCard image={womenBottom} product_name={'Bottom Wear'} />
+        </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+        }}>
+        <ProductTypeCard image={womenCasual} product_name={'Casual Wear'} />
+        <ProductTypeCard image={womenFormal} product_name={'Formal Wear'} />
+      </View>
+    </>
+  );
+};
 
 const SecondRoute = () => (
   <>
@@ -122,7 +130,7 @@ const renderScene = SceneMap({
   forth: forthRoute,
 });
 
-export default function Categories() {
+export default function Categories({navigation}) {
   const layout = useWindowDimensions();
 
   const [index, setIndex] = React.useState(0);

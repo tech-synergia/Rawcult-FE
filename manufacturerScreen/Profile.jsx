@@ -112,8 +112,7 @@ const Profile = ({navigation}) => {
               fontSize: 18,
               fontWeight: '600',
             }}>
-            {/* {userInfo?.name} */}
-            Pooja Kumari
+            {userInfo?.name}
           </Text>
           <Text
             style={{
@@ -121,8 +120,7 @@ const Profile = ({navigation}) => {
               fontWeight: '400',
               color: 'grey',
             }}>
-            {/* {userInfo?.email} */}
-            pooja@gmail.com
+            {userInfo?.email}
           </Text>
         </View>
       </View>

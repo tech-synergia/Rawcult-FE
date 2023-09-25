@@ -51,8 +51,8 @@ const RegisterScreen = ({navigation}) => {
       if (response.status === 200 || 201) {
         // Show email verification alert
         Alert.alert(
-          'Email Verification',
-          'Please verify your email before logging in.',
+          'Registration Successful',
+          'Your account is registered now, Login to Continue.',
           [{text: 'OK', onPress: navigation.navigate('Signin')}],
         );
       } else {

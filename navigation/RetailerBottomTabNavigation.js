@@ -3,6 +3,7 @@ import React, {useEffect, useRef} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon, {Icons} from '../components/Icons';
 import Colors from '../components/Colors';
+import LinearGradient from 'react-native-linear-gradient';
 // import HomeScreen from '../home/RetailerHomeScreen';
 import * as Animatable from 'react-native-animatable';
 // import Categories from '../screen/Categories';
@@ -82,7 +83,7 @@ const TabButton = props => {
         <Icon
           type={item.type}
           name={focused ? item.activeIcon : item.inActiveIcon}
-          color={focused ? Colors.black : Colors.gray}
+          color={focused ? '#68048a' : Colors.gray}
         />
       </Animatable.View>
     </TouchableOpacity>

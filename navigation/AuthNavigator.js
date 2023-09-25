@@ -16,7 +16,14 @@ import SplashScreen from '../screens/SplashScreen';
 import AddProduct from '../manufacturerScreen/AddProduct';
 import ProductDetail from '../retailerScreen/ProductDetail';
 import ProductInfo from '../manufacturerScreen/ProductDetail';
-import AdminDashboardScreen from '../admin/AdminDashboardScreen';
+import WishlistScreen from '../screens/WishlistScreen';
+import NotificationScreen from '../screens/NotificationScreen';
+import WomenTopScreen from '../screens/WomenTopScreen';
+import RetailerForm from '../retailerScreen/RetailerForm';
+import WaitingApprovalScreen from '../screens/FormApproval';
+import ManufacturorForm from '../manufacturerScreen/ManufacturorForm';
+import PaymentOptions from '../retailerScreen/PaymentOptions';
+import WomenBottomWearScreen from '../screens/WomenBottomWearScreen';
 
 const Stack = createStackNavigator();
 const AuthNavigator = () => {
@@ -35,6 +42,10 @@ const AuthNavigator = () => {
       <Stack.Screen name="Signin" component={LoginScreen} />
       <Stack.Screen name="Signup" component={RegisterScreen} />
       <Stack.Screen name="Forget" component={ForgetPassword} />
+      <Stack.Screen name="role" component={ManufacturorForm} />
+      <Stack.Screen name="retailerForm" component={RetailerForm} />
+      <Stack.Screen name="formApproval" component={WaitingApprovalScreen} />
+
       <Stack.Screen
         name="ReatilerHome"
         component={RetailerBottomTabNavigation}
@@ -44,6 +55,11 @@ const AuthNavigator = () => {
       <Stack.Screen name="ProductDetail" component={ProductDetail} />
       <Stack.Screen name="ProductInfo" component={ProductInfo} />
       <Stack.Screen name="Wishlist" component={WishlistScreen} />
+      <Stack.Screen name="Notification" component={NotificationScreen} />
+      <Stack.Screen name="womenTop" component={WomenTopScreen} />
+      <Stack.Screen name="womenBottom" component={WomenBottomWearScreen} />
+      <Stack.Screen name="payment" component={PaymentOptions} />
+      <Stack.Screen name="cart" component={Cart} />
     </Stack.Navigator>
   );
 };

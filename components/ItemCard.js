@@ -16,10 +16,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ItemCard = ({image, product_name, product_price}) => {
+const ItemCard = ({image, product_name, product_price, productId}) => {
   const [isLiked, setIsLiked] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [loginToken, setLOginToken] = useState('');
+
+  console.log('proooooo', productId);
 
   useEffect(() => {
     (async () => {
@@ -45,7 +47,7 @@ const ItemCard = ({image, product_name, product_price}) => {
         height: 'auto',
         padding: 15,
         width: 160,
-        height: 210,
+        height: 'auto',
         display: 'flex',
         borderColor: '#c2c3c4',
         borderWidth: 1,
@@ -55,16 +57,98 @@ const ItemCard = ({image, product_name, product_price}) => {
         margin: 18,
       }}>
       {/* <Rating rating={5} totalStars={5} number={"(5.0)"} /> */}
-      <TouchableOpacity onPress={() => navigation.navigate('ProductDetail')}>
-        <Image
+      <View style={{position: 'relative'}}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ProductDetail', {id: productId})}>
+          <Image
+            style={{
+              width: 160,
+              height: 162,
+              alignSelf: 'center',
+              marginTop: -15,
+            }}
+            source={image}
+          />
+        </TouchableOpacity>
+        <View
           style={{
-            width: 120,
-            height: 120,
-            alignSelf: 'center',
-          }}
-          source={image}
-        />
-      </TouchableOpacity>
+            position: 'absolute',
+            top: -8, // Adjust the top position as needed
+            right: -5,
+          }}>
+          <TouchableOpacity onPress={toggleLike}>
+            <Ionicons
+              name={isLiked ? 'heart' : 'heart-outline'}
+              size={25}
+              color={isLiked ? 'red' : 'black'}
+            />
+          </TouchableOpacity>
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(false);
+              }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  height: '35%',
+                  bottom: 5,
+                  borderColor: '#95359c',
+                  borderRadius: 10,
+                  width: '98%',
+                  alignSelf: 'center',
+                  backgroundColor: '#d6cae3',
+                }}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(false)}
+                  style={{
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{fontSize: 16, alignSelf: 'flex-end'}}>
+                    <Entypo name="cross" size={35} color={'grey'} />
+                  </Text>
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    marginBottom: 20,
+                    fontSize: 14,
+                    color: '#53149c',
+                    fontWeight: '600',
+                  }}>
+                  Login or Register to explore more and add it to your wishlist.
+                </Text>
+                <TouchableOpacity style={styles.loginButton}>
+                  <Text
+                    style={styles.loginButtonText}
+                    onPress={() => {
+                      navigation.navigate('Signin');
+                      closeModal();
+                    }}>
+                    Login
+                  </Text>
+                </TouchableOpacity>
+                <View style={{marginTop: 10}}>
+                  <Text style={styles.orText}>OR</Text>
+                </View>
+                <TouchableOpacity style={styles.loginButton}>
+                  <Text
+                    style={styles.loginButtonText}
+                    onPress={() => {
+                      navigation.navigate('Signup');
+                      closeModal();
+                    }}>
+                    Register
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </Modal>
+          </View>
+        </View>
+      </View>
       <Text
         style={{
           fontSize: 18,
@@ -78,97 +162,12 @@ const ItemCard = ({image, product_name, product_price}) => {
       <Text
         style={{
           fontSize: 15,
-          color: 'grey',
-          textAlign: 'center',
+          color: '#000',
+          textAlign: 'justify',
           fontWeight: '800',
         }}>
         <FontAwesome name="rupee" size={14} /> {product_price}
-        {/* {console.log('loginnnnn', loginToken)}
-        {loginToken ? (
-          <Text style={{}}>
-            <FontAwesome name="rupee" size={14} /> {product_price}
-          </Text>
-        ) : (
-          ''
-        )} */}
       </Text>
-      <View
-        style={{
-          alignSelf: 'flex-end',
-          marginBottom: 8,
-        }}>
-        <TouchableOpacity onPress={toggleLike}>
-          <Ionicons
-            name={isLiked ? 'heart' : 'heart-outline'}
-            size={22}
-            color={isLiked ? 'red' : 'black'}
-          />
-        </TouchableOpacity>
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(false);
-            }}>
-            <View
-              style={{
-                position: 'absolute',
-                height: '35%',
-                bottom: 5,
-                borderColor: '#95359c',
-                borderRadius: 10,
-                width: '98%',
-                alignSelf: 'center',
-                backgroundColor: '#d6cae3',
-              }}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={{
-                  alignItems: 'center',
-                }}>
-                <Text style={{fontSize: 16, alignSelf: 'flex-end'}}>
-                  <Entypo name="cross" size={35} color={'grey'} />
-                </Text>
-              </TouchableOpacity>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  marginBottom: 20,
-                  fontSize: 14,
-                  color: '#53149c',
-                  fontWeight: '600',
-                }}>
-                Login or Register to explore more and add it to your wishlist.
-              </Text>
-              <TouchableOpacity style={styles.loginButton}>
-                <Text
-                  style={styles.loginButtonText}
-                  onPress={() => {
-                    navigation.navigate('Signin');
-                    closeModal();
-                  }}>
-                  Login
-                </Text>
-              </TouchableOpacity>
-              <View style={{marginTop: 10}}>
-                <Text style={styles.orText}>OR</Text>
-              </View>
-              <TouchableOpacity style={styles.loginButton}>
-                <Text
-                  style={styles.loginButtonText}
-                  onPress={() => {
-                    navigation.navigate('Signup');
-                    closeModal();
-                  }}>
-                  Register
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </Modal>
-        </View>
-      </View>
     </View>
   );
 };

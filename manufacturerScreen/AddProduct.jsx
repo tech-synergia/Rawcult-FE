@@ -9,6 +9,7 @@ import {
   TextInput,
   ImageBackground,
   Modal,
+  Alert,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -18,8 +19,18 @@ import {Dropdown} from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
+import axios from 'axios';
 
 const AddProduct = ({navigation}) => {
+  const [stocks, setStocks] = useState(10);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState(100);
+  const [category, setCategory] = useState('');
+  const [subCategory, setSubCategory] = useState('');
+  const [sizeQuantity, setSizeQuantity] = useState('');
+  const [productSize, setProductSize] = useState('');
+  const [minQty, setMinQty] = useState(10);
   (async () => {
     const getToken = await AsyncStorage.getItem('acessToken');
     console.log('njnjbjbjbjbj', getToken);
@@ -64,6 +75,7 @@ const AddProduct = ({navigation}) => {
   const [image, setImage] = useState(null);
   const [modal, setModal] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
+  const [loginToken, setLOginToken] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -85,6 +97,40 @@ const AddProduct = ({navigation}) => {
   const handleInputChange = text => {
     const numericValue = text.replace(/[^0-9]/g, '');
     setQuantity(numericValue);
+  };
+
+  const handleAddProduct = async () => {
+    const productData = {
+      name,
+      value,
+      subValue,
+      colors,
+      quantity,
+      minQty,
+      description,
+    };
+
+    try {
+      const response = await axios.post(
+        'https://rawcult-be.vercel.app/products',
+        productData,
+        {
+          headers: {
+            Authorization: `Bearer ${loginToken}`,
+            'Content-Type': 'application/json', // Set the content type as per your API's requirements
+          },
+        },
+      );
+      if (response.status === 200 || 201) {
+        // Show email verification alert
+        Alert.alert('Product Added');
+      } else {
+        // Show error message
+        Alert.alert('Error', 'An error occurred during signup.');
+      }
+    } catch (error) {
+      Alert.alert('Error', error.response.data.msg);
+    }
   };
 
   return (
@@ -194,8 +240,8 @@ const AddProduct = ({navigation}) => {
             placeholder="Enter product name"
             placeholderTextColor="#aaa"
             autoCapitalize="none"
-            // onChangeText={(text) => setName(text)}
-            // value={name}
+            onChangeText={text => setName(text)}
+            value={name}
           />
           <Text style={styles.label}>Product Image:</Text>
 
@@ -282,12 +328,10 @@ const AddProduct = ({navigation}) => {
                 marginLeft: 15,
               }}
               placeholder="Enter quantity"
-              onChangeText={handleInputChange}
-              value={quantity}
               placeholderTextColor="#aaa"
               autoCapitalize="none"
-              // onChangeText={(text) => setName(text)}
-              // value={name}
+              onChangeText={text => setSizeQuantity(text)}
+              value={sizeQuantity}
             />
           </View>
           <Text style={styles.label}>Colors Available:</Text>
@@ -343,8 +387,6 @@ const AddProduct = ({navigation}) => {
             value={quantity}
             placeholderTextColor="#aaa"
             autoCapitalize="none"
-            // onChangeText={(text) => setName(text)}
-            // value={name}
           />
           <Text style={styles.label}>Minimum Quantity for Order:</Text>
 
@@ -360,13 +402,13 @@ const AddProduct = ({navigation}) => {
               fontSize: 16,
               alignSelf: 'center',
             }}
-            placeholder="Enter Price"
-            onChangeText={handleInputChange}
-            value={quantity}
+            placeholder="Enter minimum quantity"
+            // onChangeText={handleInputChange}
+            // value={quantity}
             placeholderTextColor="#aaa"
             autoCapitalize="none"
-            // onChangeText={(text) => setName(text)}
-            // value={name}
+            onChangeText={text => setMinQty(text)}
+            value={minQty}
           />
           <Text style={styles.label}>Product Description:</Text>
           <TextInput
@@ -388,11 +430,13 @@ const AddProduct = ({navigation}) => {
             autoCapitalize="none"
             multiline={true}
             numberOfLines={5} // You can adjust the number of visible lines
-            // onChangeText={(text) => setName(text)}
-            // value={name}
+            onChangeText={text => setDescription(text)}
+            value={description}
           />
 
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleAddProduct}>
             <Text style={styles.loginButtonText}>
               <Ionicons name="add-circle-outline" size={25} /> Add
             </Text>

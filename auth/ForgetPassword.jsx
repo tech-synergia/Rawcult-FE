@@ -10,6 +10,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import axios from 'axios';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const ForgetPassword = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -77,50 +78,65 @@ const ForgetPassword = ({navigation}) => {
   };
   return (
     // <View style={styles.container}>
-    <ImageBackground
-      source={require('../assets/background.webp')}
-      style={styles.container}>
-      <Text style={styles.logo}>Forgot Password</Text>
-      <Text
-        style={{
-          alignSelf: 'flex-start',
-          marginTop: -15,
-          marginBottom: 30,
-          fontSize: 15,
-          fontWeight: '600',
-          color: '#6e6d70',
-        }}>
-        Please, enter your email address.You will receive a link to create a new
-        password via email.
-      </Text>
-
-      <Text
-        style={{
-          fontSize: 16,
-          fontWeight: '500',
-          marginBottom: 5,
-          alignSelf: 'flex-start',
-          color: '#6e6d70',
-          marginTop: 10,
-        }}>
-        Email
-      </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#aaa"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        onChangeText={text => setEmail(text)}
-        value={email}
-      />
-
-      <TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.loginButtonText} onPress={handleLogin}>
-          Send
-        </Text>
+    <>
+      <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
+        <Ionicons
+          style={{
+            marginLeft: 5,
+            alignSelf: 'flex-start',
+            backgroundColor: '#d3eef2',
+            width: '100%',
+          }}
+          name="arrow-back"
+          size={35}
+          color={'#14489c'}
+        />
       </TouchableOpacity>
-    </ImageBackground>
+      <ImageBackground
+        source={require('../assets/background.webp')}
+        style={styles.container}>
+        <Text style={styles.logo}>Forgot Password</Text>
+        <Text
+          style={{
+            alignSelf: 'flex-start',
+            marginTop: -15,
+            marginBottom: 30,
+            fontSize: 15,
+            fontWeight: '600',
+            color: '#6e6d70',
+          }}>
+          Please, enter your email address.You will receive a link to create a
+          new password via email.
+        </Text>
+
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: '500',
+            marginBottom: 5,
+            alignSelf: 'flex-start',
+            color: '#6e6d70',
+            marginTop: 10,
+          }}>
+          Email
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#aaa"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          onChangeText={text => setEmail(text)}
+          value={email}
+        />
+
+        <TouchableOpacity style={styles.loginButton}>
+          <Text style={styles.loginButtonText} onPress={handleLogin}>
+            Send
+          </Text>
+        </TouchableOpacity>
+      </ImageBackground>
+    </>
   );
 };
 

@@ -23,7 +23,7 @@ const LoginScreen = ({navigation}) => {
     (async () => {
       const user = await AsyncStorage.getItem('user');
       const loggedUser = JSON.parse(user);
-      if (loggedUser.userId) {
+      if (loggedUser && loggedUser.userId) {
         if (
           loggedUser.role === 'manufacturer' &&
           loggedUser.firstTimeLogin === false
@@ -83,16 +83,34 @@ const LoginScreen = ({navigation}) => {
             {text: 'OK', onPress: () => navigation.navigate('retailerForm')},
           ]);
         } else if (
-          loggedUser.role === 'manufacturer' &&
-          loggedUser.firstTimeLogin === false
+          response.data.user.role === 'retailer' &&
+          response.data.user.firstTimeLogin === false &&
+          response.data.user.isApproved === false
+        ) {
+          Alert.alert('Sign In Successful', 'You are now signed in.', [
+            // { text: "OK", onPress: () => navigation.navigate("retailerForm") },
+            {text: 'OK', onPress: () => navigation.navigate('formApproval')},
+          ]);
+        } else if (
+          response.data.user.role === 'manufacturer' &&
+          response.data.user.firstTimeLogin === false &&
+          response.data.user.isApproved === false
+        ) {
+          Alert.alert('Sign In Successful', 'You are now signed in.', [
+            // { text: "OK", onPress: () => navigation.navigate("retailerForm") },
+            {text: 'OK', onPress: () => navigation.navigate('formApproval')},
+          ]);
+        } else if (
+          response.data.user.role === 'manufacturer' &&
+          response.data.user.firstTimeLogin === false
         ) {
           Alert.alert('Sign In Successful', 'You are now signed in.', [
             // { text: "OK", onPress: () => navigation.navigate("retailerForm") },
             {text: 'OK', onPress: () => navigation.navigate('MfHome')},
           ]);
         } else if (
-          loggedUser.role === 'retailer' &&
-          loggedUser.firstTimeLogin === false
+          response.data.user.role === 'retailer' &&
+          response.data.user.firstTimeLogin === false
         ) {
           Alert.alert('Sign In Successful', 'You are now signed in.', [
             // { text: "OK", onPress: () => navigation.navigate("retailerForm") },

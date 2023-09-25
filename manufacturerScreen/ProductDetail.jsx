@@ -14,6 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Dropdown} from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {useRoute} from '@react-navigation/native';
 
 // import Carousel, {Pagination} from 'react-native-reanimated-carousel';
 import SizeCard from '../components/SizeCard';
@@ -28,7 +29,12 @@ const ProductInfo = ({navigation}) => {
   const [backgroundColor, setBackgroundColor] = useState('#fff');
   const [textColor, setTextColor] = useState('#000');
   const [availablelQuantity, setAvailablelQuantityy] = useState(totalQuantity);
+  const [productSize, setProductSize] = useState();
 
+  const route = useRoute();
+  const {id: productId} = route.params;
+
+  console.log('window', productId);
   const increaseQuantity = () => {
     setQuantity(quantity + 1);
   };
