@@ -26,6 +26,19 @@ import HelpCenter from '../screens/HelpCenter';
 import PrivacyPolicy from '../screens/PrivacyPolicy';
 import MyOrders from '../retailerScreen/profile/MyOrders';
 import Settings from '../retailerScreen/profile/Settings';
+import WomenFormal from '../screens/WomenFormal';
+import WomenCasual from '../screens/WomenCasual';
+import MenTopScreen from '../screens/MenTopScreen';
+import MenBottomScreen from '../screens/MenBottomScreen';
+import MenCasual from '../screens/MenCasual';
+import MenFormal from '../screens/MenFormal';
+import KidsTopScreen from '../screens/KidsTopScreen';
+import KidsBottomScreen from '../screens/KidsBottomScreen';
+import KidsCasual from '../screens/KidsCasual';
+import KidsFormal from '../screens/KidsFormal';
+import WomenAccessories from '../screens/WomenAccessories';
+import MenAccessories from '../screens/MenAccessories';
+import KidsAccessories from '../screens/KidsAccessories';
 
 const Stack = createStackNavigator();
 const AuthNavigator = () => {
@@ -47,7 +60,6 @@ const AuthNavigator = () => {
       <Stack.Screen name="role" component={ManufacturorForm} />
       <Stack.Screen name="retailerForm" component={RetailerForm} />
       <Stack.Screen name="formApproval" component={WaitingApprovalScreen} />
-
       <Stack.Screen
         name="ReatilerHome"
         component={RetailerBottomTabNavigation}
@@ -60,6 +72,19 @@ const AuthNavigator = () => {
       <Stack.Screen name="Notification" component={NotificationScreen} />
       <Stack.Screen name="womenTop" component={WomenTopScreen} />
       <Stack.Screen name="womenBottom" component={WomenBottomWearScreen} />
+      <Stack.Screen name="womenCasual" component={WomenCasual} />
+      <Stack.Screen name="womenFormal" component={WomenFormal} />
+      <Stack.Screen name="menTop" component={MenTopScreen} />
+      <Stack.Screen name="menBottom" component={MenBottomScreen} />
+      <Stack.Screen name="menCasual" component={MenCasual} />
+      <Stack.Screen name="menFormal" component={MenFormal} />
+      <Stack.Screen name="kidsTop" component={KidsTopScreen} />
+      <Stack.Screen name="kidsBottom" component={KidsBottomScreen} />
+      <Stack.Screen name="kidsFormal" component={KidsFormal} />
+      <Stack.Screen name="kidsCasual" component={KidsCasual} />
+      <Stack.Screen name="womenAcess" component={WomenAccessories} />
+      <Stack.Screen name="menAcess" component={MenAccessories} />
+      <Stack.Screen name="kidsAcess" component={KidsAccessories} />
       <Stack.Screen name="payment" component={PaymentOptions} />
       <Stack.Screen name="allOrders" component={AllOrders} />
       <Stack.Screen name="myOrders" component={MyOrders} />

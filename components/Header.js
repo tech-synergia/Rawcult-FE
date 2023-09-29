@@ -39,62 +39,61 @@ export const Header = ({props}) => {
   // console.log('userrr', userInfo, loginToken);
   return (
     <LinearGradient
-      colors={['#bf5ce0', '#190121']} // Array of gradient colors
+      colors={['#ff66c4', '#5170ff']} // Array of gradient colors
       start={{x: 0, y: 0}} // Start point of the gradient
       end={{x: 1, y: 0}} // End point of the gradient
-      style={{flex: 1}}>
-      <View style={styles.container}>
-        {/* <TouchableOpacity onPress={() => navigation.toggleDrawer()}> */}
-        <View>
-          {/* <Ionicons
-            style={{ color: "grey", marginLeft: 15 }}
-            name="menu-sharp"
-            size={35}
-            color="#000"
-          /> */}
-          <Text style={{fontSize: 15, fontWeight: '800', marginLeft: 10}}>
-            {loginToken ? (
-              <>
-                <MaterialCommunityIcons
-                  name="hand-wave"
-                  size={25}
-                  color="#fff"
-                />
-                {''} Hello! {userInfo?.name}
-              </>
-            ) : (
-              <>
-                <MaterialCommunityIcons
-                  name="hand-wave"
-                  size={25}
-                  color="#fff"
-                />
-                {'  '}
-                Hello, let's shop!
-              </>
-            )}
-          </Text>
+      style={styles.container}>
+      {loginToken ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            marginLeft: -10,
+            height: 55,
+            borderRadius: 10,
+          }}>
+          <Image
+            style={{
+              height: '98%',
+              backgroundColor: '#fff',
+              width: 50,
+              opacity: 0.78,
+              borderRadius: 10,
+              marginLeft: 12,
+            }}
+            source={require('../assets/Rawcult.png')}
+          />
         </View>
-        {/* </TouchableOpacity> */}
+      ) : (
+        <Image source={require('../assets/Rawcult.png')} />
+      )}
 
-        <View style={styles.iconsContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('Wishlist')}>
-            <Ionicons
-              style={styles.icon1}
-              name="heart-outline"
-              size={30}
-              color="#fff"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
-            <Ionicons
-              style={styles.icon}
-              name="notifications-outline"
-              color="#fff"
-              size={30}
-            />
-          </TouchableOpacity>
-        </View>
+      <Text
+        style={{
+          color: '#fff',
+          fontSize: 25,
+          fontWeight: 'bold',
+          marginLeft: -170,
+        }}>
+        Rawcult
+      </Text>
+
+      <View style={styles.iconsContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('Wishlist')}>
+          <Ionicons
+            style={styles.icon1}
+            name="heart-outline"
+            size={30}
+            color={'#fff'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
+          <Ionicons
+            style={styles.icon}
+            name="notifications-outline"
+            color={'#fff'}
+            size={30}
+          />
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
@@ -104,9 +103,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
-    height: 50,
-    marginTop: 0,
+    height: 55,
+    marginTop: -30,
     marginBottom: 10,
+    flex: 1,
+    marginLeft: -10,
   },
   logo: {
     width: 130,
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
   },
   iconsContainer: {
     flexDirection: 'row',
-    marginBottom: -12,
+    // marginBottom: -12,
   },
   icon: {
     width: 30,
@@ -125,7 +126,6 @@ const styles = StyleSheet.create({
     marginRight: 20,
     resizeMode: 'contain',
     flexDirection: 'row',
-    color: 'grey',
   },
   icon1: {
     marginTop: 1,
@@ -134,6 +134,5 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     resizeMode: 'contain',
     flexDirection: 'row',
-    color: 'grey',
   },
 });

@@ -10,6 +10,7 @@ import {
   ImageBackground,
   Modal,
   Alert,
+  Button,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -20,8 +21,47 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
+import LinearGradient from 'react-native-linear-gradient';
 
 const AddProduct = ({navigation}) => {
+  const [inputFields, setInputFields] = useState([
+    {id: Date.now().toString(), size: '', quantity: ''},
+  ]);
+
+  useEffect(() => {
+    // Ensure there is always at least one input field when the component mounts
+    if (inputFields.length === 0) {
+      setInputFields([{id: Date.now().toString(), size: '', quantity: ''}]);
+    }
+  }, []);
+
+  const addInputFields = () => {
+    const newFields = [
+      ...inputFields,
+      {id: Date.now().toString(), size: '', quantity: ''},
+    ];
+    setInputFields(newFields);
+  };
+
+  const removeInputFields = id => {
+    if (inputFields.length === 1) {
+      // Ensure that at least one input field remains
+      return;
+    }
+    const updatedFields = inputFields.filter(field => field.id !== id);
+    setInputFields(updatedFields);
+  };
+
+  const handleInputChange = (id, inputName, value) => {
+    const updatedFields = inputFields.map(field => {
+      if (field.id === id) {
+        return {...field, [inputName]: value};
+      }
+      return field;
+    });
+    setInputFields(updatedFields);
+  };
+
   const [stocks, setStocks] = useState(10);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -103,6 +143,10 @@ const AddProduct = ({navigation}) => {
   };
 
   const handleAddProduct = async () => {
+    const monster = inputFields.map(val => ({
+      quantity: Number(val.quantity),
+      size: val?.size?.value,
+    }));
     const productData = {
       name,
       category,
@@ -110,7 +154,7 @@ const AddProduct = ({navigation}) => {
       colors,
       // quantity,
       minQty,
-      sizes,
+      sizes: monster,
       description,
       stocks: Number(stocks),
       price,
@@ -149,192 +193,200 @@ const AddProduct = ({navigation}) => {
     }
   };
 
-  console.log('<<<>>>>', stocks, sizes);
+  console.log('<<<>>>>', inputFields);
 
   return (
-    <SafeAreaView style={{marginBottom: 85, marginTop: 25}}>
-      <ImageBackground
-        style={{height: '100%'}}
-        source={require('../assets/productBack.jpg')}>
-        <TouchableOpacity onPress={() => navigation.navigate('MfHome')}>
-          <Ionicons
-            style={{marginTop: -25, marginLeft: 5}}
-            name="arrow-back"
-            size={35}
-            color={'#14489c'}
-          />
-        </TouchableOpacity>
-        <ScrollView>
-          <View
-            style={{
-              width: '98%',
-              borderRadius: 10,
-              alignSelf: 'center',
-              flexDirection: 'row',
-            }}>
-            <Text
-              style={{
-                marginTop: 80,
-                fontSize: 25,
-                fontWeight: '600',
-                color: '#74a1e8',
-                marginLeft: 25,
-              }}>
-              Add Product
-            </Text>
-            <Image
-              style={{
-                width: 200,
-                height: 200,
-                alignSelf: 'center',
-                borderRadius: 20,
-              }}
-              source={require('../assets/backk.png')}
-            />
-          </View>
-
+    <LinearGradient
+      colors={['#ff66c4', '#5170ff']} // Array of gradient colors
+      start={{x: 0, y: 0}} // Start point of the gradient
+      end={{x: 1, y: 0}} // End point of the gradient
+      style={{flex: 1}}>
+      <TouchableOpacity onPress={() => navigation.navigate('MfHome')}>
+        <Ionicons
+          style={{marginTop: -25, marginLeft: 5}}
+          name="arrow-back"
+          size={35}
+          color={'#14489c'}
+        />
+      </TouchableOpacity>
+      <ScrollView style={{marginBottom: 80}}>
+        <View
+          style={{
+            width: '98%',
+            borderRadius: 10,
+            alignSelf: 'center',
+            flexDirection: 'row',
+          }}>
           <Text
             style={{
-              fontSize: 20,
-              textAlign: 'center',
-              color: '#606263',
+              marginTop: 80,
+              fontSize: 25,
               fontWeight: '600',
+              color: '#74a1e8',
+              marginLeft: 25,
             }}>
-            Fill the product details to add product!
+            Add Product
           </Text>
+          <Image
+            style={{
+              width: 200,
+              height: 200,
+              alignSelf: 'center',
+              borderRadius: 20,
+            }}
+            source={require('../assets/backk.png')}
+          />
+        </View>
+
+        <Text
+          style={{
+            fontSize: 20,
+            textAlign: 'center',
+            color: '#606263',
+            fontWeight: '600',
+          }}>
+          Fill the product details to add product!
+        </Text>
+        <View
+          style={{
+            height: 1,
+            width: '90%',
+            backgroundColor: 'grey',
+            alignSelf: 'center',
+            marginBottom: 20,
+            alignSelf: 'center',
+          }}
+        />
+        <Text style={styles.label}>Product Category:</Text>
+        <Dropdown
+          style={[styles.dropdown, isFocus && {borderColor: '#4075c9'}]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          data={categoryData}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select Category' : 'Select One'}
+          searchPlaceholder="Search..."
+          value={category}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setCategory(item.value);
+            setIsFocus(false);
+          }}
+        />
+
+        <Text style={styles.label}>Product Sub Category:</Text>
+        <Dropdown
+          style={[styles.dropdown, isFocus && {borderColor: '#4075c9'}]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          data={subCategoryData}
+          maxHeight={200}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select Sub Category' : 'Select One'}
+          value={subCategory}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setSubCategory(item.value);
+            setIsFocus(false);
+          }}
+        />
+        <Text style={styles.label}>Product Name:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter product name"
+          placeholderTextColor="#aaa"
+          autoCapitalize="none"
+          onChangeText={text => setName(text)}
+          value={name}
+        />
+        <Text style={styles.label}>Product Image:</Text>
+
+        {!image ? (
           <View
             style={{
-              height: 1,
-              width: '90%',
-              backgroundColor: 'grey',
-              alignSelf: 'center',
-              marginBottom: 20,
-              alignSelf: 'center',
-            }}
-          />
-          <Text style={styles.label}>Product Category:</Text>
-          <Dropdown
-            style={[styles.dropdown, isFocus && {borderColor: '#4075c9'}]}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            data={categoryData}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={!isFocus ? 'Select Category' : 'Select One'}
-            searchPlaceholder="Search..."
-            value={category}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            onChange={item => {
-              setCategory(item.value);
-              setIsFocus(false);
-            }}
-          />
-
-          <Text style={styles.label}>Product Sub Category:</Text>
-          <Dropdown
-            style={[styles.dropdown, isFocus && {borderColor: '#4075c9'}]}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            data={subCategoryData}
-            maxHeight={200}
-            labelField="label"
-            valueField="value"
-            placeholder={!isFocus ? 'Select Sub Category' : 'Select One'}
-            value={subCategory}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            onChange={item => {
-              setSubCategory(item.value);
-              setIsFocus(false);
-            }}
-          />
-          <Text style={styles.label}>Product Name:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter product name"
-            placeholderTextColor="#aaa"
-            autoCapitalize="none"
-            onChangeText={text => setName(text)}
-            value={name}
-          />
-          <Text style={styles.label}>Product Image:</Text>
-
-          {!image ? (
-            <View
-              style={{
-                height: 130,
-                width: '80%',
-                borderColor: '#74a1e8',
-                borderWidth: 1,
-                borderRadius: 8,
-                paddingHorizontal: 8,
-                marginBottom: 10,
-                backgroundColor: '#ededed',
-                marginLeft: 45,
-              }}>
-              <TouchableOpacity onPress={handleImagePicker}>
-                <Text
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    textAlign: 'center',
-                    margin: 40,
-                  }}>
-                  {Camera}
-                </Text>
-
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    margin: -30,
-                    marginTop: -35,
-                    color: 'black',
-                    fontWeight: '600',
-                  }}>
-                  +Add Photo
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <>
-              {selectedImages.map((image, index) => (
-                <Image
-                  key={index}
-                  source={{uri: image.uri}}
-                  style={{width: 100, height: 100, margin: 10}}
-                />
-              ))}
-              {/* {console.log("image", updatedImage)} */}
-            </>
-          )}
-          <Text style={styles.label}>Total Stocks:</Text>
-
-          <TextInput
-            style={{
+              height: 130,
               width: '80%',
-              height: 50,
-              borderWidth: 1,
               borderColor: '#74a1e8',
-              borderRadius: 10,
-              marginBottom: 15,
-              paddingHorizontal: 15,
-              fontSize: 16,
-              alignSelf: 'center',
-            }}
-            placeholder="Enter total stocks"
-            placeholderTextColor="#aaa"
-            autoCapitalize="none"
-            onChangeText={text => setStocks(text)}
-            value={stocks}
-          />
-          <Text style={styles.label}>Sizes Available:</Text>
+              borderWidth: 1,
+              borderRadius: 8,
+              paddingHorizontal: 8,
+              marginBottom: 10,
+              backgroundColor: '#ededed',
+              marginLeft: 45,
+            }}>
+            <TouchableOpacity onPress={handleImagePicker}>
+              <Text
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  margin: 40,
+                }}>
+                {Camera}
+              </Text>
+
+              <Text
+                style={{
+                  textAlign: 'center',
+                  margin: -30,
+                  marginTop: -35,
+                  color: 'black',
+                  fontWeight: '600',
+                }}>
+                +Add Photo
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+            {selectedImages.map((image, index) => (
+              <Image
+                key={index}
+                source={{uri: image.uri}}
+                style={{width: 100, height: 100, margin: 10}}
+              />
+            ))}
+            {/* {console.log("image", updatedImage)} */}
+          </>
+        )}
+        <Text style={styles.label}>Total Stocks:</Text>
+
+        <TextInput
+          style={{
+            width: '80%',
+            height: 50,
+            borderWidth: 1,
+            borderColor: '#74a1e8',
+            borderRadius: 10,
+            marginBottom: 15,
+            paddingHorizontal: 15,
+            fontSize: 16,
+            alignSelf: 'center',
+          }}
+          placeholder="Enter total stocks"
+          placeholderTextColor="#aaa"
+          autoCapitalize="none"
+          onChangeText={text => setStocks(text)}
+          value={stocks}
+        />
+        <Text style={styles.label}>Sizes Available:</Text>
+
+        {inputFields.map(field => (
           <View
-            style={{flexDirection: 'row', alignSelf: 'center', marginLeft: 20}}>
+            key={field.id}
+            style={{
+              flexDirection: 'row',
+              alignSelf: 'center',
+              marginLeft: 20,
+            }}>
             <Dropdown
               style={[styles.sizedropdown, isFocus && {borderColor: '#4075c9'}]}
               placeholderStyle={styles.placeholderStyle}
@@ -345,13 +397,15 @@ const AddProduct = ({navigation}) => {
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Select size' : 'Select One'}
-              value={size}
+              // value={size}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
-              onChange={item => {
-                setSize(item.value);
-                setIsFocus(false);
-              }}
+              // onChange={item => {
+              //   setSize(item.value);
+              //   setIsFocus(false);
+              // }}
+              value={field.size}
+              onChange={text => handleInputChange(field.id, 'size', text)}
             />
             <TextInput
               style={{
@@ -369,141 +423,154 @@ const AddProduct = ({navigation}) => {
               placeholder="Enter quantity"
               placeholderTextColor="#aaa"
               autoCapitalize="none"
-              onChangeText={handlesizeQuantityChange}
-              value={sizeQuantity}
+              value={field.quantity}
+              onChangeText={text =>
+                handleInputChange(field.id, 'quantity', text)
+              }
             />
-            <TouchableOpacity onPress={handleSizeQuantity}>
-              <Ionicons
-                style={{marginTop: 10, marginLeft: 5}}
-                name="add-circle-outline"
-                size={30}
-                color={'#74a1e8'}
-              />
-            </TouchableOpacity>
-            {/* <Text>{sizeQuantityTotal}</Text> */}
-          </View>
-          {sizes.map((item, index) => (
-            <View
-              key={index}
-              style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-              <Text style={{fontSize: 16, fontWeight: '700', color: '#000'}}>
-                Size:{item?.size}
-              </Text>
-              <Text style={{fontSize: 16, fontWeight: '700', color: '#000'}}>
-                Quantity:{item?.quantity}
-              </Text>
+            <View style={{flexDirection: 'column'}}>
+              <TouchableOpacity onPress={addInputFields}>
+                <Ionicons
+                  style={{marginLeft: 5}}
+                  name="add-outline"
+                  size={30}
+                  color={'#74a1e8'}
+                />
+              </TouchableOpacity>
+              {inputFields.length > 1 && (
+                <TouchableOpacity onPress={() => removeInputFields(field.id)}>
+                  <Ionicons
+                    style={{marginLeft: 5, marginTop: -8}}
+                    name="remove-outline"
+                    size={28}
+                    color={'#74a1e8'}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
-          ))}
-          <Text style={styles.label}>Colors Available:</Text>
-          <DropDownPicker
-            style={{
-              height: 50,
-              width: '80%',
-              alignSelf: 'center',
-              borderColor: '#74a1e8',
-              borderWidth: 1,
-              borderRadius: 8,
-              paddingHorizontal: 8,
-              marginBottom: 10,
-              backgroundColor: '#ededed',
-            }}
-            items={Colordata}
-            open={open}
-            setOpen={() => setOpen(!open)}
-            value={colors}
-            setValue={val => setColors(val)}
-            maxHeight={200}
-            autoScroll
-            placeholder="Select Colors"
-            showTickIcon={true}
-            multiple={true}
-            min={0}
-            mode="BADGE"
-            placeholderStyle={{color: '#acafb5', fontSize: 15}}
-            dropDownContainerStyle={{
-              width: 328,
-              marginLeft: 40,
-              borderColor: '#74a1e8',
-              borderRadius: 10,
-              marginBottom: 30,
-            }}
-          />
-          <Text style={styles.label}>Product Price per Unit:</Text>
+          </View>
+        ))}
+        {/* <Text>{sizeQuantityTotal}</Text> */}
 
-          <TextInput
-            style={{
-              width: '80%',
-              height: 50,
-              borderWidth: 1,
-              borderColor: '#74a1e8',
-              borderRadius: 10,
-              marginBottom: 15,
-              paddingHorizontal: 15,
-              fontSize: 16,
-              alignSelf: 'center',
-            }}
-            placeholder="Enter Price"
-            onChangeText={text => setPrice(text)}
-            value={price}
-            placeholderTextColor="#aaa"
-            autoCapitalize="none"
-          />
-          <Text style={styles.label}>Minimum Quantity for Order:</Text>
-
-          <TextInput
-            style={{
-              width: '80%',
-              height: 50,
-              borderWidth: 1,
-              borderColor: '#74a1e8',
-              borderRadius: 10,
-              marginBottom: 15,
-              paddingHorizontal: 15,
-              fontSize: 16,
-              alignSelf: 'center',
-            }}
-            placeholder="Enter minimum quantity"
-            // onChangeText={handleInputChange}
-            // value={quantity}
-            placeholderTextColor="#aaa"
-            autoCapitalize="none"
-            onChangeText={text => setMinQty(text)}
-            value={minQty}
-          />
-          <Text style={styles.label}>Product Description:</Text>
-          <TextInput
-            style={{
-              width: '80%',
-              height: 50,
-              borderWidth: 1,
-              borderColor: '#74a1e8',
-              borderRadius: 10,
-              marginBottom: 15,
-              paddingHorizontal: 15,
-              fontSize: 16,
-              alignSelf: 'center',
-              height: 100,
-              paddingVertical: 8,
-            }}
-            placeholder="Enter product description..."
-            placeholderTextColor="#aaa"
-            autoCapitalize="none"
-            multiline={true}
-            numberOfLines={5} // You can adjust the number of visible lines
-            onChangeText={text => setDescription(text)}
-            value={description}
-          />
-
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={handleAddProduct}>
-            <Text style={styles.loginButtonText}>
-              <Ionicons name="add-circle-outline" size={25} /> Add
+        {sizes.map((item, index) => (
+          <View
+            key={index}
+            style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+            <Text style={{fontSize: 16, fontWeight: '700', color: '#000'}}>
+              Size:{item?.size}
             </Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </ImageBackground>
-    </SafeAreaView>
+            <Text style={{fontSize: 16, fontWeight: '700', color: '#000'}}>
+              Quantity:{item?.quantity}
+            </Text>
+          </View>
+        ))}
+        <Text style={styles.label}>Colors Available:</Text>
+        <DropDownPicker
+          style={{
+            height: 50,
+            width: '80%',
+            alignSelf: 'center',
+            borderColor: '#74a1e8',
+            borderWidth: 1,
+            borderRadius: 8,
+            paddingHorizontal: 8,
+            marginBottom: 10,
+            backgroundColor: '#ededed',
+          }}
+          items={Colordata}
+          open={open}
+          setOpen={() => setOpen(!open)}
+          value={colors}
+          setValue={val => setColors(val)}
+          maxHeight={200}
+          autoScroll
+          placeholder="Select Colors"
+          showTickIcon={true}
+          multiple={true}
+          min={0}
+          mode="BADGE"
+          placeholderStyle={{color: '#acafb5', fontSize: 15}}
+          dropDownContainerStyle={{
+            width: 328,
+            marginLeft: 40,
+            borderColor: '#74a1e8',
+            borderRadius: 10,
+            marginBottom: 30,
+          }}
+        />
+        <Text style={styles.label}>Product Price per Unit:</Text>
+
+        <TextInput
+          style={{
+            width: '80%',
+            height: 50,
+            borderWidth: 1,
+            borderColor: '#74a1e8',
+            borderRadius: 10,
+            marginBottom: 15,
+            paddingHorizontal: 15,
+            fontSize: 16,
+            alignSelf: 'center',
+          }}
+          placeholder="Enter Price"
+          onChangeText={text => setPrice(text)}
+          value={price}
+          placeholderTextColor="#aaa"
+          autoCapitalize="none"
+        />
+        <Text style={styles.label}>Minimum Quantity for Order:</Text>
+
+        <TextInput
+          style={{
+            width: '80%',
+            height: 50,
+            borderWidth: 1,
+            borderColor: '#74a1e8',
+            borderRadius: 10,
+            marginBottom: 15,
+            paddingHorizontal: 15,
+            fontSize: 16,
+            alignSelf: 'center',
+          }}
+          placeholder="Enter minimum quantity"
+          // onChangeText={handleInputChange}
+          // value={quantity}
+          placeholderTextColor="#aaa"
+          autoCapitalize="none"
+          onChangeText={text => setMinQty(text)}
+          value={minQty}
+        />
+        <Text style={styles.label}>Product Description:</Text>
+        <TextInput
+          style={{
+            width: '80%',
+            height: 50,
+            borderWidth: 1,
+            borderColor: '#74a1e8',
+            borderRadius: 10,
+            marginBottom: 15,
+            paddingHorizontal: 15,
+            fontSize: 16,
+            alignSelf: 'center',
+            height: 100,
+            paddingVertical: 8,
+          }}
+          placeholder="Enter product description..."
+          placeholderTextColor="#aaa"
+          autoCapitalize="none"
+          multiline={true}
+          numberOfLines={5} // You can adjust the number of visible lines
+          onChangeText={text => setDescription(text)}
+          value={description}
+        />
+
+        <TouchableOpacity style={styles.loginButton} onPress={handleAddProduct}>
+          <Text style={styles.loginButtonText}>
+            <Ionicons name="add-circle-outline" size={25} /> Add
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </LinearGradient>
   );
 };
 

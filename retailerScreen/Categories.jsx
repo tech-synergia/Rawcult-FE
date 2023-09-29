@@ -6,10 +6,12 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import ProductTypeCard from '../components/ProductTypeCard';
 import {useNavigation} from '@react-navigation/native';
+import {useState} from 'react';
 const womenBottom = require('../assets/womenBottom.webp');
 const womenTop = require('../assets/image2.jpeg');
 const womenCasual = require('../assets/womenCasual.webp');
@@ -30,99 +32,145 @@ const kidsShoe = require('../assets/kidsShoe.jpeg');
 const FirstRoute = () => {
   const navigation = useNavigation();
   return (
-    <>
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-evenly',
-        }}>
+    <View style={{marginBottom: 80}}>
+      <ScrollView>
         <TouchableOpacity onPress={() => navigation.navigate('womenTop')}>
-          <ProductTypeCard image={womenTop} product_name={'Top Wear'} />
+          <ProductTypeCard
+            backgroundColor={'#dabce3'}
+            image={womenTop}
+            product_name={'Top Wear'}
+          />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('womenBottom')}>
-          <ProductTypeCard image={womenBottom} product_name={'Bottom Wear'} />
+          <ProductTypeCard
+            backgroundColor={'#b595bf'}
+            image={womenBottom}
+            product_name={'Bottom Wear'}
+          />
         </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-evenly',
-        }}>
-        <ProductTypeCard image={womenCasual} product_name={'Casual Wear'} />
-        <ProductTypeCard image={womenFormal} product_name={'Formal Wear'} />
-      </View>
-    </>
+        <TouchableOpacity onPress={() => navigation.navigate('womenCasual')}>
+          <ProductTypeCard
+            backgroundColor={'#b595bf'}
+            image={womenCasual}
+            product_name={'Casual Wear'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('womenFormal')}>
+          <ProductTypeCard
+            backgroundColor={'#b595bf'}
+            image={womenFormal}
+            product_name={'Formal Wear'}
+          />
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   );
 };
 
-const SecondRoute = () => (
-  <>
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-      }}>
-      <ProductTypeCard image={menTop} product_name={'Top Wear'} />
-      <ProductTypeCard image={menBottom} product_name={'Bottom Wear'} />
+const SecondRoute = () => {
+  const navigation = useNavigation();
+  return (
+    <View style={{marginBottom: 80}}>
+      <ScrollView>
+        <TouchableOpacity onPress={() => navigation.navigate('menTop')}>
+          <ProductTypeCard
+            backgroundColor={'#9dace0'}
+            image={menTop}
+            product_name={'Top Wear'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('menBottom')}>
+          <ProductTypeCard
+            backgroundColor={'#9dace0'}
+            image={menBottom}
+            product_name={'Bottom Wear'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('menCasual')}>
+          <ProductTypeCard
+            backgroundColor={'#9dace0'}
+            image={menCasual}
+            product_name={'Casual Wear'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('menFormal')}>
+          <ProductTypeCard
+            backgroundColor={'#9dace0'}
+            image={menFormal}
+            product_name={'Formal Wear'}
+          />
+        </TouchableOpacity>
+      </ScrollView>
     </View>
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-      }}>
-      <ProductTypeCard image={menCasual} product_name={'Casual Wear'} />
-      <ProductTypeCard image={menFormal} product_name={'Formal Wear'} />
+  );
+};
+const thirdRoute = () => {
+  const navigation = useNavigation();
+  return (
+    <View style={{marginBottom: 80}}>
+      <ScrollView>
+        <TouchableOpacity onPress={() => navigation.navigate('kidsTop')}>
+          <ProductTypeCard
+            backgroundColor={'#c3dfe3'}
+            image={kidsTop}
+            product_name={'Top Wear'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('kidsBottom')}>
+          <ProductTypeCard
+            backgroundColor={'#c3dfe3'}
+            image={kidsBottom}
+            product_name={'Bottom Wear'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('kidsCasual')}>
+          <ProductTypeCard
+            backgroundColor={'#c3dfe3'}
+            image={kidsCasual}
+            product_name={'Casual Wear'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('kidsFormal')}>
+          <ProductTypeCard
+            backgroundColor={'#c3dfe3'}
+            image={kidsFormal}
+            product_name={'Formal Wear'}
+          />
+        </TouchableOpacity>
+      </ScrollView>
     </View>
-  </>
-);
-const thirdRoute = () => (
-  <>
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-      }}>
-      <ProductTypeCard image={kidsTop} product_name={'Top Wear'} />
-      <ProductTypeCard image={kidsBottom} product_name={'Bottom Wear'} />
+  );
+};
+const forthRoute = () => {
+  const navigation = useNavigation();
+  return (
+    <View style={{marginBottom: 80}}>
+      <ScrollView>
+        <TouchableOpacity onPress={() => navigation.navigate('womenAcess')}>
+          <ProductTypeCard
+            backgroundColor={'#d6d6bc'}
+            image={womenAccess}
+            product_name={'Women Acessories'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('menAcess')}>
+          <ProductTypeCard
+            backgroundColor={'#d6d6bc'}
+            image={menAccess}
+            product_name={'Men Acessories'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('kidsAcess')}>
+          <ProductTypeCard
+            backgroundColor={'#d6d6bc'}
+            image={kidsAcess}
+            product_name={'Kids Acessories'}
+          />
+        </TouchableOpacity>
+      </ScrollView>
     </View>
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-      }}>
-      <ProductTypeCard image={kidsCasual} product_name={'Casual Wear'} />
-      <ProductTypeCard image={kidsFormal} product_name={'Formal Wear'} />
-    </View>
-  </>
-);
-const forthRoute = () => (
-  <>
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-      }}>
-      <ProductTypeCard image={womenAccess} product_name={'Women Acessories'} />
-      <ProductTypeCard image={menAccess} product_name={'Men Acessories'} />
-    </View>
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-      }}>
-      <ProductTypeCard image={kidsAcess} product_name={'Kids Acessories'} />
-      <ProductTypeCard image={kidsShoe} product_name={'Shoes'} />
-    </View>
-  </>
-);
+  );
+};
 const renderScene = SceneMap({
   first: FirstRoute,
   second: SecondRoute,
@@ -132,13 +180,14 @@ const renderScene = SceneMap({
 
 export default function Categories({navigation}) {
   const layout = useWindowDimensions();
+  const [selectedTab, setSelectedTab] = useState('');
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    {key: 'first', title: 'Women'},
-    {key: 'second', title: 'Men'},
-    {key: 'third', title: 'Kids'},
-    {key: 'forth', title: 'Acessories'},
+    {key: 'first', title: 'Women', value: 'womens wear'},
+    {key: 'second', title: 'Men', value: 'mens wear'},
+    {key: 'third', title: 'Kids', value: 'kids wear'},
+    {key: 'forth', title: 'Acessories', value: 'accessories wear'},
 
     // { key: "forth", title: "Accessories" },
   ]);
@@ -165,12 +214,14 @@ export default function Categories({navigation}) {
         onIndexChange={setIndex}
         // initialLayout={{ width: "98%" }}
         renderTabBar={props => (
-          <TabBar
-            {...props}
-            style={styles.tabBar}
-            labelStyle={styles.tabBarLabel}
-            indicatorStyle={styles.tabBarIndicator}
-          />
+          <>
+            <TabBar
+              {...props}
+              style={styles.tabBar}
+              labelStyle={styles.tabBarLabel}
+              indicatorStyle={styles.tabBarIndicator}
+            />
+          </>
         )}
       />
     </>

@@ -12,11 +12,22 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../components/CustomLoader';
+import LinearGradient from 'react-native-linear-gradient';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [loaderVisible, setLoaderVisible] = useState(false);
+
+  const showLoader = () => {
+    setLoaderVisible(true);
+  };
+
+  const hideLoader = () => {
+    setLoaderVisible(false);
+  };
   // const [loggedUser, setLoggedUser] = useState("");
 
   useEffect(() => {
@@ -144,8 +155,10 @@ const LoginScreen = ({navigation}) => {
   };
   return (
     // <View style={styles.container}>
-    <ImageBackground
-      source={require('../assets/authBack.jpg')}
+    <LinearGradient
+      colors={['#ff66c4', '#5170ff']} // Array of gradient colors
+      start={{x: 0, y: 0}} // Start point of the gradient
+      end={{x: 1, y: 0}} // End point of the gradient
       style={styles.container}>
       {/* <View
         style={{
@@ -246,6 +259,11 @@ const LoginScreen = ({navigation}) => {
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
+      <CustomLoader
+        visible={loaderVisible}
+        message="Sign In Successful. You are now signed in."
+        onClose={hideLoader}
+      />
       <View style={{display: 'flex', flexDirection: 'row'}}>
         <Text
           style={{
@@ -335,7 +353,7 @@ const LoginScreen = ({navigation}) => {
           </Text>
         </View>
       </TouchableOpacity> */}
-    </ImageBackground>
+    </LinearGradient>
   );
 };
 

@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import LinearGradient from 'react-native-linear-gradient';
 
 import axios from 'axios';
 
@@ -67,11 +68,11 @@ const RegisterScreen = ({navigation}) => {
     navigation.navigate('Signin');
   };
   return (
-    <ImageBackground
-      source={require('../assets/authBack.jpg')}
-      style={styles.container}
-      // style={{ alignSelf: "flex-start", height: "100%", width: "100%" }}
-    >
+    <LinearGradient
+      colors={['#ff66c4', '#5170ff']} // Array of gradient colors
+      start={{x: 0, y: 0}} // Start point of the gradient
+      end={{x: 1, y: 0}} // End point of the gradient
+      style={styles.container}>
       <Text style={styles.logo}>Welcome to Rawcult</Text>
       <Text
         style={{
@@ -280,7 +281,7 @@ const RegisterScreen = ({navigation}) => {
           </Text>
         </View>
       </TouchableOpacity>
-    </ImageBackground>
+    </LinearGradient>
   );
 };
 

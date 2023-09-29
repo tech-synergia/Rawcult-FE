@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ForgetPassword = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -79,21 +80,28 @@ const ForgetPassword = ({navigation}) => {
   return (
     // <View style={styles.container}>
     <>
-      <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-        <Ionicons
-          style={{
-            marginLeft: 5,
-            alignSelf: 'flex-start',
-            backgroundColor: '#d3eef2',
-            width: '100%',
-          }}
-          name="arrow-back"
-          size={35}
-          color={'#14489c'}
-        />
-      </TouchableOpacity>
-      <ImageBackground
-        source={require('../assets/background.webp')}
+      <LinearGradient
+        colors={['#ff66c4', '#5170ff']} // Array of gradient colors
+        start={{x: 0, y: 0}} // Start point of the gradient
+        end={{x: 1, y: 0}} // End point of the gradient
+      >
+        <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
+          <Ionicons
+            style={{
+              marginLeft: 5,
+              alignSelf: 'flex-start',
+              width: '100%',
+            }}
+            name="arrow-back"
+            size={35}
+            color={'#fff'}
+          />
+        </TouchableOpacity>
+      </LinearGradient>
+      <LinearGradient
+        colors={['#ff66c4', '#5170ff']} // Array of gradient colors
+        start={{x: 0, y: 0}} // Start point of the gradient
+        end={{x: 1, y: 0}} // End point of the gradient
         style={styles.container}>
         <Text style={styles.logo}>Forgot Password</Text>
         <Text
@@ -135,7 +143,7 @@ const ForgetPassword = ({navigation}) => {
             Send
           </Text>
         </TouchableOpacity>
-      </ImageBackground>
+      </LinearGradient>
     </>
   );
 };

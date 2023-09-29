@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Alert} from 'react-native';
 import {DataTable} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AddRemove from './AddRemove';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Table = ({
   tableData,
@@ -75,51 +75,85 @@ const Table = ({
   return (
     <DataTable style={styles.container}>
       <DataTable.Header style={styles.tableHeader}>
-        <DataTable.Title>Size</DataTable.Title>
-        <DataTable.Title>Colour</DataTable.Title>
-        <DataTable.Title>Quantity</DataTable.Title>
-        <DataTable.Title>Total Price</DataTable.Title>
+        <DataTable.Title>
+          <Text style={{fontSize: 17, fontWeight: '600', color: '#000'}}>
+            Size
+          </Text>
+        </DataTable.Title>
+        <DataTable.Title>
+          <Text style={{fontSize: 17, fontWeight: '600', color: '#000'}}>
+            Color
+          </Text>
+        </DataTable.Title>
+        <DataTable.Title>
+          <Text style={{fontSize: 17, fontWeight: '600', color: '#000'}}>
+            Quantity
+          </Text>
+        </DataTable.Title>
+        <DataTable.Title>
+          <Text style={{fontSize: 17, fontWeight: '600', color: '#000'}}>
+            Total Price
+          </Text>
+        </DataTable.Title>
       </DataTable.Header>
 
       {tableData.map(val => (
         <>
-          <DataTable.Row>
-            <DataTable.Cell>{val.size}</DataTable.Cell>
-            <DataTable.Cell>{val.color}</DataTable.Cell>
+          <DataTable.Row style={{display: 'flex', alignItems: 'center'}}>
             <DataTable.Cell>
-              <TouchableOpacity
-                onPress={() => {
-                  decreaseQuantity(val);
-                }}>
-                <Ionicons
-                  style={{marginTop: 10}}
-                  name="remove-outline"
-                  size={24}
-                  color={'#c90e30'}
-                />
-              </TouchableOpacity>
               <Text
                 style={{
-                  color: '#000',
-                  fontWeight: '800',
-                  fontSize: 15,
+                  fontSize: 17,
+                  fontWeight: '600',
+                  color: 'grey',
                 }}>
-                {val.quantity}
+                {val.size}
               </Text>
-              <TouchableOpacity
-                style={{marginLeft: 5}}
-                onPress={() => {
-                  increaseQuantity(val);
-                }}>
-                <Ionicons
-                  style={{marginTop: 10}}
-                  name="add-outline"
-                  size={24}
-                  color="#068c06"
-                />
-              </TouchableOpacity>
             </DataTable.Cell>
-            <DataTable.Cell>{val.price * val?.quantity}</DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={{fontSize: 17, fontWeight: '600', color: 'grey'}}>
+                {val.color}
+              </Text>
+            </DataTable.Cell>
+            <DataTable.Cell>
+              <View
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    decreaseQuantity(val);
+                  }}>
+                  <Ionicons
+                    name="remove-circle-sharp"
+                    size={20}
+                    color={'#c90e30'}
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    color: '#000',
+                    fontWeight: '800',
+                    fontSize: 18,
+                  }}>
+                  {val.quantity}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    increaseQuantity(val);
+                  }}>
+                  <Ionicons name="add-circle-sharp" size={20} color="#068c06" />
+                </TouchableOpacity>
+              </View>
+            </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={{fontSize: 17, fontWeight: '600', color: 'grey'}}>
+                <FontAwesome name="rupee" size={18} />
+                {val.price * val?.quantity}
+              </Text>
+            </DataTable.Cell>
           </DataTable.Row>
         </>
       ))}

@@ -274,7 +274,11 @@ const ManufacturerHomeScreen = ({navigation}) => {
             </>
           ) : (
             <>
-              <ActivityIndicator animating={true} color={MD2Colors.red800} />
+              <ActivityIndicator
+                style
+                animating={true}
+                color={MD2Colors.grey600}
+              />
             </>
           )}
         </View>

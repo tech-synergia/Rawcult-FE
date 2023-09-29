@@ -1,6 +1,7 @@
 import React from 'react';
-import {View, StyleSheet, Image} from 'react-native';
-import Logo from '../assets/image.png';
+import {View, StyleSheet, Image, Text} from 'react-native';
+import Logo from '../assets/Rawcultlogo.png';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function SplashScreen() {
   return (
@@ -17,7 +18,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    height: '100%',
-    width: '100%',
+    height: '160%',
+    width: '160%',
+    marginTop: 60,
+    marginRight: 70,
   },
 });

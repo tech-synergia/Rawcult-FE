@@ -46,6 +46,7 @@ const ProductDetail = ({navigation}) => {
       ['a', 'b', 'c', 'd'],
     ],
   });
+  const totalSelectedQuantity = fixedQuantity - availablelQuantity;
   const route = useRoute();
   const {id: productId} = route.params;
   console.log(
@@ -169,7 +170,22 @@ const ProductDetail = ({navigation}) => {
     {label: 'Pink', value: 'pink'},
   ];
 
-  console.log('daaa', data);
+  console.log('daaa', quantity);
+
+  const handleBuyNow = () => {
+    if (totalSelectedQuantity >= quantity) {
+      navigation.navigate('cart');
+    } else {
+      Alert.alert(
+        'Quantity Limit',
+        `There should be minimum ${quantity} to proceed.`,
+        [
+          // { text: "OK", onPress: () => navigation.navigate("retailerForm") },
+          {text: 'OK', onPress: () => navigation.navigate('ReatilerHome')},
+        ],
+      );
+    }
+  };
 
   return (
     <View style={{marginTop: 15, marginBottom: 40}}>
@@ -190,12 +206,26 @@ const ProductDetail = ({navigation}) => {
           closeIconColor="#000"
         />
         <View>
-          <Text style={{marginLeft: 10, fontWeight: '500'}}>{data?.name}</Text>
-          <Text style={{marginLeft: 10, fontWeight: '500'}}>
+          <Text
+            style={{
+              marginLeft: 10,
+              fontWeight: '900',
+              color: 'grey',
+              fontSize: 22,
+            }}>
+            {data?.name}
+          </Text>
+          <Text
+            style={{
+              marginLeft: 10,
+              fontWeight: '700',
+              fontSize: 15,
+              color: 'grey',
+            }}>
             {data?.description}
           </Text>
           <ProgressBar
-            progress={percentage / 100} // Convert percentage to a value between 0 and 1
+            progress={selectedSize ? percentage / 100 : percentage} // Convert percentage to a value between 0 and 1
             color={color}
             style={{
               height: 15,
@@ -224,7 +254,7 @@ const ProductDetail = ({navigation}) => {
                 marginTop: 5,
                 color: '#000',
               }}>
-              {availablelQuantity}
+              {selectedSize ? availablelQuantity : fixedQuantity}
             </Text>
           </View>
           <Text
@@ -310,6 +340,49 @@ const ProductDetail = ({navigation}) => {
               sizes={sizes}
             />
           )}
+          {selectedSize ? (
+            <>
+              <View
+                style={{
+                  height: 1.5,
+                  width: '90%',
+                  backgroundColor: '#d2cdd4',
+                  alignSelf: 'center',
+                  marginBottom: 10,
+                  marginTop: 10,
+                }}
+              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'flex-end',
+                }}>
+                <Text
+                  style={{
+                    marginRight: 5,
+                    fontSize: 20,
+                    color: '#000',
+                    fontWeight: 'bold',
+                  }}>
+                  Grand Total:
+                </Text>
+                <Text
+                  style={{
+                    alignSelf: 'flex-end',
+                    marginRight: 25,
+                    fontSize: 20,
+                    color: '#5170ff',
+                    fontWeight: '800',
+                  }}>
+                  <FontAwesome name="rupee" size={18} />
+                  {''}
+                  {totalSelectedQuantity * data?.price}
+                </Text>
+              </View>
+            </>
+          ) : (
+            ''
+          )}
         </View>
         {selectedSize ? (
           <View
@@ -377,7 +450,7 @@ const ProductDetail = ({navigation}) => {
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('cart')}>
+            <TouchableOpacity onPress={handleBuyNow}>
               <View
                 style={{
                   backgroundColor: '#9373eb',
