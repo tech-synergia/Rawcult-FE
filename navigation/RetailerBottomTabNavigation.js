@@ -1,6 +1,13 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React, {useEffect, useRef} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  BackHandler,
+  Alert,
+} from 'react-native';
 import Icon, {Icons} from '../components/Icons';
 import Colors from '../components/Colors';
 import LinearGradient from 'react-native-linear-gradient';
@@ -83,7 +90,7 @@ const TabButton = props => {
         <Icon
           type={item.type}
           name={focused ? item.activeIcon : item.inActiveIcon}
-          color={focused ? '#5170ff' : Colors.gray}
+          color={focused ? '#fff' : Colors.gray}
         />
       </Animatable.View>
     </TouchableOpacity>
@@ -91,6 +98,28 @@ const TabButton = props => {
 };
 
 export default function RetailerBottomTabNavigation() {
+  // useEffect(() => {
+  //   if (TabArr[0].route === 'Home') {
+  //     const backAction = () => {
+  //       Alert.alert('Hold on!', 'Are you sure you want to go back?', [
+  //         {
+  //           text: 'Cancel',
+  //           onPress: () => null,
+  //           style: 'cancel',
+  //         },
+  //         {text: 'YES', onPress: () => BackHandler.exitApp()},
+  //       ]);
+  //       return true;
+  //     };
+
+  //     const backHandler = BackHandler.addEventListener(
+  //       'hardwareBackPress',
+  //       backAction,
+  //     );
+
+  //     return () => backHandler.remove();
+  //   }
+  // }, []);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -103,6 +132,7 @@ export default function RetailerBottomTabNavigation() {
           right: 16,
           left: 16,
           borderRadius: 16,
+          backgroundColor: '#006DFF',
         },
       }}>
       {TabArr.map((item, index) => {

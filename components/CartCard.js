@@ -75,6 +75,7 @@ const CartCard = ({
           }}>
           {product_name}
         </Text>
+
         <View
           style={{
             display: 'flex',
@@ -102,7 +103,13 @@ const CartCard = ({
             </Text>
           </View>
           <View style={styles.container}>
-            <TouchableOpacity
+            <Text style={{fontSize: 15, fontWeight: '600', color: 'grey'}}>
+              Quantity:{' '}
+            </Text>
+            <Text style={{fontSize: 18, fontWeight: '700', color: '#000'}}>
+              {quantity}
+            </Text>
+            {/* <TouchableOpacity
               onPress={decreaseQuantity}
               //   disabled={quantity === 100}
             >
@@ -115,7 +122,7 @@ const CartCard = ({
             <Text style={styles.quantityText}>{quantity}</Text>
             <TouchableOpacity onPress={increaseQuantity}>
               <Ionicons name="add-outline" size={24} color="black" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </View>

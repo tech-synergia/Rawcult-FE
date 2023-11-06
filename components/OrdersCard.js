@@ -1,5 +1,6 @@
 import {View, Text, Image, StyleSheet} from 'react-native';
 import React from 'react';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const OrdersCard = ({
   image,
@@ -40,7 +41,7 @@ const OrdersCard = ({
       <View style={{width: '60%', margin: 15}}>
         <Text
           style={{
-            fontSize: 12,
+            fontSize: 13,
             color: '#0a0226',
             textAlign: 'auto',
             fontWeight: 'bold',
@@ -62,14 +63,18 @@ const OrdersCard = ({
         <View
           style={{
             display: 'flex',
-            flexDirection: 'row',
             justifyContent: 'flex-start',
             marginTop: -15,
           }}>
-          <Text style={{fontWeight: '300', fontSize: 15}}>
+          <Text
+            style={{
+              fontWeight: '400',
+              fontSize: 15,
+              color: 'grey',
+            }}>
             Color: {product_color}
           </Text>
-          <Text style={{marginLeft: 25, fontWeight: '300', fontSize: 15}}>
+          <Text style={{fontWeight: '500', fontSize: 15, color: 'grey'}}>
             Size: {product_size}
           </Text>
         </View>
@@ -79,7 +84,8 @@ const OrdersCard = ({
             fontWeight: '300',
             fontSize: 15,
             marginTop: 5,
-            fontWeight: '400',
+            fontWeight: '500',
+            color: 'grey',
           }}>
           Quantity: {product_quantity}
         </Text>
@@ -89,8 +95,9 @@ const OrdersCard = ({
             fontSize: 15,
             marginTop: 5,
             fontWeight: '500',
+            color: 'grey',
           }}>
-          Amount: {product_amount}
+          Amount:{''} <FontAwesome name="rupee" size={14} /> {product_amount}
         </Text>
       </View>
     </View>
@@ -98,18 +105,3 @@ const OrdersCard = ({
 };
 
 export default OrdersCard;
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-  },
-  quantityText: {
-    marginHorizontal: 10,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

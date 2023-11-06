@@ -1,8 +1,8 @@
 import {View, Text, TouchableOpacity} from 'react-native';
-import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import React from 'react';
 
-const MyWishlist = ({navigation}) => {
+const HelpCenter = ({navigation}) => {
   return (
     <View style={{marginTop: 20, marginBottom: 45}}>
       <TouchableOpacity onPress={() => navigation.navigate('ReatilerHome')}>
@@ -22,8 +22,9 @@ const MyWishlist = ({navigation}) => {
           height: 25,
           width: '100%',
           marginBottom: 5,
+          marginTop: -15,
         }}>
-        MY WISHLIST
+        HELP CENTER
       </Text>
       <View
         style={{
@@ -39,4 +40,4 @@ const MyWishlist = ({navigation}) => {
   );
 };
 
-export default MyWishlist;
+export default HelpCenter;

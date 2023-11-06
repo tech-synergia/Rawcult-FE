@@ -8,33 +8,114 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Linking,
 } from 'react-native';
 import React, {useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Dropdown} from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {useRoute} from '@react-navigation/native';
-
-// import Carousel, {Pagination} from 'react-native-reanimated-carousel';
+import {ProgressBar, MD3Colors} from 'react-native-paper';
+import Table from '../components/Table';
 import SizeCard from '../components/SizeCard';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {useEffect} from 'react';
-const ProductInfo = ({navigation}) => {
-  const totalQuantity = 100;
+import {useRoute} from '@react-navigation/native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const ProductDetail = ({navigation}) => {
+  // const totalQuantity = 90;
   const [isFocus, setIsFocus] = useState(false);
-  const [size, setSize] = useState(null);
+  const [colorChart, setColorChart] = useState('white');
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(0); // Default quantity
   const [backgroundColor, setBackgroundColor] = useState('#fff');
   const [textColor, setTextColor] = useState('#000');
+  const [data, setData] = useState({});
+  const [sizes, setSizes] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [fixedQuantity, setFixedQuantity] = useState(10);
+  const [totalQuantity, setTotalQuantity] = useState(10);
   const [availablelQuantity, setAvailablelQuantityy] = useState(totalQuantity);
-  const [productSize, setProductSize] = useState();
+  const [state, setState] = useState({
+    tableHead: ['Head1', 'Head2', 'Head3', 'Head4'],
+    tableData: [
+      ['1', '2', '3', '4'],
+      ['a', 'b', 'c', 'd'],
+      ['1', '2', '3', '456\n789'],
+      ['a', 'b', 'c', 'd'],
+    ],
+  });
+  const [userId, setUserId] = useState('');
+  const [loginToken, setLOginToken] = useState('');
+  let user;
+  useEffect(() => {
+    (async () => {
+      const token = await AsyncStorage.getItem('acessToken');
+      setLOginToken(token);
+      user = await AsyncStorage.getItem('user');
+      const loggedUser = JSON.parse(user);
+      setUserId(loggedUser.userId);
+      // console.log("njnjbjbjbjbj", getToken);
+    })();
+  }, []);
 
+  const totalSelectedQuantity = fixedQuantity - availablelQuantity;
   const route = useRoute();
   const {id: productId} = route.params;
+  console.log(
+    '🚀 ~ file: ProductDetail.jsx:45 ~ ProductDetail ~ productId:',
+    productId,
+  );
 
-  console.log('window', productId);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `https://rawcult-be.vercel.app/products/id/${productId}`,
+      ); // Replace with your API endpoint
+      if (response.status === 200) {
+        const sizeArray = [];
+        let qty = 0;
+        console.log('resssss', response?.data?.product);
+        response.data.product.sizes.map(val => {
+          qty += val.quantity;
+          sizeArray.push({size: val.size, quantity: val.quantity});
+        });
+        console.log('qty', qty);
+        setTotalQuantity(qty);
+        setFixedQuantity(qty);
+        setSizes(sizeArray);
+        setData(response?.data?.product);
+      } else {
+        Alert.alert('Error');
+      }
+      // setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const images = [
+    require('../assets/first.jpg'),
+    require('../assets/second.jpg'),
+    require('../assets/third.jpg'),
+    require('../assets/forth.jpg'),
+    require('../assets/fifth.jpg'),
+  ];
+  const [image, setImages] = useState(images);
+
+  // Calculate the percentage of available quantity
+
+  const percentage = (availablelQuantity / fixedQuantity) * 100;
+
+  // Determine the color based on the percentage
+  const color = percentage < 10 ? 'red' : 'green';
+
   const increaseQuantity = () => {
     setQuantity(quantity + 1);
   };
@@ -54,12 +135,32 @@ const ProductInfo = ({navigation}) => {
 
   useEffect(() => {
     console.log('QQQQ', quantity);
+    const selectedQuantity = tableData.reduce(
+      (acc, curr) => (acc += curr.quantity),
+      0,
+    );
+    setAvailablelQuantityy(
+      selectedQuantity <= 0 ? fixedQuantity : fixedQuantity - selectedQuantity,
+    );
+    console.log('>>>>>>>', selectedQuantity, fixedQuantity);
+  }, [tableData]);
 
-    setAvailablelQuantityy(totalQuantity - quantity);
-  }, [quantity]);
-
-  const handleSizeSelection = size => {
+  const handleSizeSelection = ({size, quantity}) => {
     setSelectedSize(size);
+    setTotalQuantity(totalQuantity - 1);
+    const newData = {size, color: colorChart, quantity: 1, price: data.price};
+    const index = tableData.findIndex(
+      item => item.size === size && item.color === colorChart,
+    );
+    if (index !== -1) {
+      setTableData(prev => {
+        const updatedData = [...prev];
+        updatedData[index] = {...updatedData[index], ...newData};
+        return updatedData;
+      });
+    } else {
+      setTableData(prev => [...prev, newData]);
+    }
     setQuantity(20);
     setBackgroundColor('#000');
     setTextColor('#fff');
@@ -73,13 +174,6 @@ const ProductInfo = ({navigation}) => {
     }
   };
 
-  const images = [
-    require('../assets/first.jpg'),
-    require('../assets/second.jpg'),
-    require('../assets/third.jpg'),
-    require('../assets/forth.jpg'),
-    require('../assets/fifth.jpg'),
-  ];
   const Colordata = [
     {label: 'Black', value: 'black'},
     {label: 'White', value: 'white'},
@@ -90,8 +184,65 @@ const ProductInfo = ({navigation}) => {
     {label: 'Multicolour', value: 'multicolour'},
     {label: 'Pink', value: 'pink'},
   ];
+
+  console.log('daaa', quantity);
+
+  const handleBuyNow = async () => {
+    const orderData = {
+      productId,
+      userId,
+      sizes: tableData,
+    };
+    console.log(orderData);
+    if (totalSelectedQuantity >= quantity) {
+      try {
+        const response = await axios.post(
+          'https://rawcult-be.vercel.app/cart/addCartItem',
+          orderData,
+          {
+            headers: {
+              Authorization: `Bearer ${loginToken}`,
+              'Content-Type': 'application/json', // Set the content type as per your API's requirements
+            },
+          },
+        );
+        console.log('??????????', response);
+        if (response.status === 201) {
+          // Show email verification alert
+          Alert.alert('Product added to cart', 'You can see it in your Cart', [
+            // { text: "OK", onPress: () => navigation.navigate("retailerForm") },
+            {
+              text: 'OK',
+              onPress: () => navigation.navigate('cart'),
+            },
+          ]);
+        } else {
+          // Show error message
+          Alert.alert('Error', 'Something went wrong!');
+        }
+      } catch (error) {
+        // Alert.alert('Error', 'Something went wrong!');
+      }
+    } else {
+      console.log('>>>>', quantity);
+
+      Alert.alert(
+        'Quantity Limit',
+        `There should be minimum ${quantity} to proceed.`,
+        [
+          // { text: "OK", onPress: () => navigation.navigate("retailerForm") },
+          {
+            text: 'OK',
+            onPress: () =>
+              navigation.navigate('ProductDetail', {id: productId}),
+          },
+        ],
+      );
+    }
+  };
+
   return (
-    <View style={{marginTop: 15}}>
+    <View style={{marginTop: 15, marginBottom: 40}}>
       <TouchableOpacity onPress={() => navigation.navigate('MfHome')}>
         <Ionicons
           style={{marginLeft: 5}}
@@ -100,176 +251,92 @@ const ProductInfo = ({navigation}) => {
           color={'#14489c'}
         />
       </TouchableOpacity>
-      <ImageSlider
-        caroselImageStyle={{resizeMode: 'cover'}}
-        data={images}
-        autoPlay={false}
-        onItemChanged={item => console.log('item', item)}
-        closeIconColor="#000"
-      />
-      <View>
-        <Text style={{marginLeft: 10, fontWeight: '500'}}>
-          Red Tape Men Polo Collar Pure Cotton T-shirt
-        </Text>
-        <View style={{flexDirection: 'row'}}>
+      <ScrollView>
+        <ScrollView horizontal>
+          {data?.image?.map((item, index) => (
+            <View style={{flexDirection: 'row', marginRight: 40}} key={index}>
+              <Image
+                style={{
+                  height: 250,
+                  width: 300,
+                  marginTop: 16,
+                  margin: 30,
+                  marginRight: -10,
+                }}
+                source={{uri: item}}
+              />
+            </View>
+          ))}
+        </ScrollView>
+        <View>
           <Text
             style={{
               marginLeft: 10,
-              fontSize: 15,
-              fontWeight: '800',
-              marginTop: 5,
+              fontWeight: '900',
+              color: 'grey',
+              fontSize: 22,
             }}>
-            Total availablle:
+            {data?.name}
           </Text>
           <Text
             style={{
-              marginLeft: 3,
-              fontSize: 15,
+              marginLeft: 10,
               fontWeight: '700',
-              marginTop: 5,
-              color: '#000',
+              fontSize: 15,
+              color: 'grey',
             }}>
-            {availablelQuantity}
+            {data?.description}
           </Text>
-        </View>
-        <Text
-          style={{
-            fontWeight: '700',
-            color: '#000',
-            marginTop: 5,
-            marginLeft: 12,
-            fontSize: 20,
-          }}>
-          <FontAwesome name="rupee" size={18} /> 1200
-        </Text>
-
-        <Text
-          style={{
-            marginLeft: 12,
-            marginTop: 15,
-            fontSize: 18,
-            fontWeight: '700',
-          }}>
-          Size:
-        </Text>
-
-        <View style={{flexDirection: 'row'}}>
-          <View
+          <ProgressBar
+            progress={selectedSize ? percentage / 100 : percentage} // Convert percentage to a value between 0 and 1
+            color={color}
             style={{
-              flexDirection: 'row',
+              height: 15,
+              borderRadius: 5,
+              width: '90%',
+              alignSelf: 'center',
               marginTop: 10,
-            }}>
-            <TouchableOpacity onPress={() => handleSizeSelection('XS')}>
-              <SizeCard
-                size={'XS'}
-                textColor={textColor}
-                backgroundColor={backgroundColor}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSizeSelection('S')}>
-              <SizeCard
-                size={'S'}
-                textColor={textColor}
-                backgroundColor={backgroundColor}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSizeSelection('M')}>
-              <SizeCard
-                size={'M'}
-                textColor={textColor}
-                backgroundColor={backgroundColor}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSizeSelection('L')}>
-              <SizeCard
-                size={'L'}
-                textColor={textColor}
-                backgroundColor={backgroundColor}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSizeSelection('XL')}>
-              <SizeCard
-                size={'XL'}
-                textColor={textColor}
-                backgroundColor={backgroundColor}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={{marginTop: -25}}>
+            }}
+          />
+          <View style={{flexDirection: 'row'}}>
             <Text
               style={{
-                marginLeft: 50,
-                fontSize: 18,
-                marginBottom: 10,
-                fontWeight: '700',
+                marginLeft: 25,
+                fontSize: 15,
+                fontWeight: '800',
+                marginTop: 5,
+                color: 'green',
               }}>
-              Color:
+              Total availablle:
             </Text>
-            <Dropdown
-              style={[styles.sizedropdown, isFocus && {borderColor: '#4075c9'}]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              data={Colordata}
-              maxHeight={200}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Select' : 'Select One'}
-              value={size}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              onChange={item => {
-                setSize(item.value);
-                setIsFocus(false);
-              }}
-            />
+            <Text
+              style={{
+                marginLeft: 3,
+                fontSize: 16,
+                fontWeight: 'bold',
+                marginTop: 5,
+                color: '#000',
+              }}>
+              {selectedSize ? availablelQuantity : fixedQuantity}
+            </Text>
           </View>
+          <Text
+            style={{
+              fontWeight: '700',
+              color: '#000',
+              marginTop: 5,
+              marginLeft: 12,
+              fontSize: 20,
+            }}>
+            <FontAwesome name="rupee" size={18} /> {data?.price}
+          </Text>
         </View>
-        {selectedSize && (
-          <View>
-            <View style={{flexDirection: 'row'}}>
-              <Text
-                style={{
-                  marginLeft: 15,
-                  fontSize: 16,
-                  fontWeight: '700',
-                  marginBottom: 10,
-                }}>
-                Selected Size:
-              </Text>
-              <Text
-                style={{
-                  marginLeft: 5,
-                  fontSize: 16,
-                  fontWeight: '900',
-                  marginBottom: 10,
-                  color: '#000',
-                }}>
-                {selectedSize}
-              </Text>
-            </View>
-            <View style={styles.container}>
-              <TouchableOpacity onPress={decreaseQuantity}>
-                <Ionicons
-                  name="remove-outline"
-                  size={24}
-                  color={quantity === 20 ? '#ccc' : '#000'}
-                />
-              </TouchableOpacity>
-              <Text style={styles.quantityText}>{quantity}</Text>
-              <TouchableOpacity onPress={increaseQuantity}>
-                <Ionicons name="add-outline" size={24} color="#000" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      </View>
+      </ScrollView>
     </View>
   );
 };
 
-export default ProductInfo;
+export default ProductDetail;
 const styles = StyleSheet.create({
   slide: {
     flex: 1,
@@ -336,4 +403,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  tableContainer: {
+    flex: 1,
+    padding: 16,
+    paddingTop: 30,
+    backgroundColor: '#fff',
+  },
+  head: {height: 40, backgroundColor: '#f1f8ff'},
+  text: {margin: 6},
 });

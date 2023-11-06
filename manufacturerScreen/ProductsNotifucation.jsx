@@ -1,11 +1,21 @@
 import {View, Text, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const MyWishlist = ({navigation}) => {
+export default function PreoductNotification({navigation}) {
+  const [loginToken, setLOginToken] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      const token = await AsyncStorage.getItem('acessToken');
+      setLOginToken(token);
+    })();
+  }, []);
   return (
-    <View style={{marginTop: 20, marginBottom: 45}}>
-      <TouchableOpacity onPress={() => navigation.navigate('ReatilerHome')}>
+    <View>
+      <TouchableOpacity onPress={() => navigation.navigate('MfHome')}>
         <Ionicons
           style={{marginLeft: 5}}
           name="arrow-back"
@@ -23,7 +33,7 @@ const MyWishlist = ({navigation}) => {
           width: '100%',
           marginBottom: 5,
         }}>
-        MY WISHLIST
+        NOTIFICATION
       </Text>
       <View
         style={{
@@ -35,8 +45,7 @@ const MyWishlist = ({navigation}) => {
           marginTop: 10,
         }}
       />
+      <Text>Received Orders</Text>
     </View>
   );
-};
-
-export default MyWishlist;
+}

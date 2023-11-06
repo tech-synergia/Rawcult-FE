@@ -75,7 +75,7 @@ const TabButton = props => {
         <Icon
           type={item.type}
           name={focused ? item.activeIcon : item.inActiveIcon}
-          color={focused ? Colors.black : Colors.gray}
+          color={focused ? '#fff' : Colors.gray}
         />
       </Animatable.View>
     </TouchableOpacity>
@@ -95,6 +95,7 @@ export default function ManufacturorBottomTabNavigation() {
           right: 16,
           left: 16,
           borderRadius: 16,
+          backgroundColor: '#006DFF',
         },
       }}>
       {TabArr.map((item, index) => {

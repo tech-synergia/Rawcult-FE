@@ -1,16 +1,12 @@
 import {
   View,
   Text,
-  SafeAreaView,
   ScrollView,
   Image,
   TouchableOpacity,
   StyleSheet,
   TextInput,
-  ImageBackground,
-  Modal,
   Alert,
-  Button,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -21,15 +17,48 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
-import LinearGradient from 'react-native-linear-gradient';
+import {useRoute} from '@react-navigation/native';
+import storage from '@react-native-firebase/storage';
+import DocumentPicker from 'react-native-document-picker';
 
 const AddProduct = ({navigation}) => {
+  const [stocks, setStocks] = useState(10);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [subCategory, setSubCategory] = useState('');
+  const [minQty, setMinQty] = useState(10);
+  const [value, setValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+  const [colors, setColors] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [selectedImages, setSelectedImages] = useState(null);
+  const [imagee, setImagee] = useState(null);
+  const [image, setImage] = useState([]);
+  const [imageFormat, setImageFormat] = useState('');
+  const [loginToken, setLOginToken] = useState('');
+  const [sizes, setSizes] = useState([]);
+  // const [secureUrls, setSecureUrls] = useState([]);
+  const [sizeData, setSizeData] = useState([
+    {label: 'S', value: 'S', disabled: false},
+    {label: 'M', value: 'M', disabled: false},
+    {label: 'L', value: 'L', disabled: false},
+    {label: 'XL', value: 'XL', disabled: false},
+    {label: 'XXL', value: 'XXL', disabled: false},
+  ]);
+  const route = useRoute();
+  const data = route.params;
+  var myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/x-www-form-urlencoded');
+
+  var urlencoded = new URLSearchParams();
+
   const [inputFields, setInputFields] = useState([
     {id: Date.now().toString(), size: '', quantity: ''},
   ]);
 
   useEffect(() => {
-    // Ensure there is always at least one input field when the component mounts
     if (inputFields.length === 0) {
       setInputFields([{id: Date.now().toString(), size: '', quantity: ''}]);
     }
@@ -59,21 +88,16 @@ const AddProduct = ({navigation}) => {
       }
       return field;
     });
+    //     console.log(
+    //       '🚀 ~ file: AddProduct.jsx:66 ~ updatedFields ~ updatedFields:',
+    //       updatedFields,
+    //     );
     setInputFields(updatedFields);
   };
 
-  const [stocks, setStocks] = useState(10);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
-  const [subCategory, setSubCategory] = useState('');
-  const [sizeQuantity, setSizeQuantity] = useState('');
-  const [productSize, setProductSize] = useState('');
-  const [minQty, setMinQty] = useState(10);
   (async () => {
     const getToken = await AsyncStorage.getItem('acessToken');
-    console.log('njnjbjbjbjbj', getToken);
+    //     console.log('njnjbjbjbjbj', getToken);
   })();
 
   const categoryData = [
@@ -85,15 +109,9 @@ const AddProduct = ({navigation}) => {
   const subCategoryData = [
     {label: 'Top Wear', value: 'top wear'},
     {label: 'Bottom Wear', value: 'bottom wear'},
-    {label: 'Sports Wear', value: 'sports wear'},
+    {label: 'Casual Wear', value: 'sports wear'},
   ];
-  const sizeData = [
-    {label: 'S', value: 'S'},
-    {label: 'M', value: 'M'},
-    {label: 'L', value: 'L'},
-    {label: 'XL', value: 'XL'},
-    {label: 'XXL', value: 'XXL'},
-  ];
+
   const Colordata = [
     {label: 'Black', value: 'black'},
     {label: 'White', value: 'white'},
@@ -104,19 +122,6 @@ const AddProduct = ({navigation}) => {
     {label: 'Multicolour', value: 'multicolour'},
     {label: 'Pink', value: 'pink'},
   ];
-  const [value, setValue] = useState(null);
-  const [subValue, setSubValue] = useState(null);
-  const [isFocus, setIsFocus] = useState(false);
-  const [size, setSize] = useState(null);
-  const [quantity, setQuantity] = useState(0);
-  const [colors, setColors] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [picture, setPicture] = useState(null);
-  const [image, setImage] = useState(null);
-  const [modal, setModal] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [loginToken, setLOginToken] = useState('');
-  const [sizes, setSizes] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -125,41 +130,141 @@ const AddProduct = ({navigation}) => {
     })();
   }, []);
 
+  const handleImageUpload = urlencoded => {
+    var requestOptions = {
+      method: 'POST',
+      body: urlencoded,
+      redirect: 'follow',
+    };
+    fetch(
+      'https://api.cloudinary.com/v1_1/dfrxndgy1/image/upload',
+      requestOptions,
+    )
+      .then(response => {
+        console.log('response checkig', response);
+        return response.json();
+      })
+      .then(result => {
+        console.log('resulting', result);
+        setImage(prev => [...prev, result.secure_url]);
+      })
+      .catch(error => console.log('error', error));
+  };
+
+  // const handleImageUpload = async formdata => {
+  //   try {
+  //     var requestOptions = {
+  //       method: 'POST',
+  //       body: formdata,
+  //       redirect: 'follow',
+  //     };
+  //     await fetch(
+  //       'https://api.cloudinary.com/v1_1/dfrxndgy1/image/upload',
+  //       requestOptions,
+  //     )
+  //       .then(response => {
+  //         console.log('response checkig', response);
+  //         response.text();
+  //       })
+  //       .then(result => console.log(result))
+  //       .catch(error => console.log('error', error));
+
+  //     // axios
+  //     //   .post(
+  //     //     'https://api.cloudinary.com/v1_1/dfrxndgy1/image/upload',
+  //     //     formdata,
+  //     //   )
+  //     //   .then()
+  //     //   .catch(err => {
+  //     //     console.log('err', err);
+  //     //   });
+  //     // if (response.status === 200) {
+  //     //   // setImage(response?.data?.image);
+  //     //   console.log('??????????', response);
+  //     // } else {
+  //     //   Alert.alert('please Select proper image');
+  //     // }
+  //   } catch (error) {
+  //     console.log('error', error);
+  //   }
+  // };
+
+  // const pickDoc = async () => {
+  //   const result = await DocumentPicker.pick({
+  //     presentationStyle: 'fullScreen',
+  //   });
+  //   console.log('🚀 ~ file: AddProduct.jsx:227 ~ pickDoc ~ result:', result);
+  //   let formdata = new FormData();
+
+  //   formdata.append('file', result[0], result[0].name);
+  //   formdata.append('upload_preset', 'my_presettt');
+  //   formdata.append('api_key', '884118737371933');
+  //   handleImageUpload(formdata);
+  // };
+
   const handleImagePicker = async () => {
-    let result = await launchImageLibrary({mediaType: 'photo'});
-    setSelectedImages(result);
+    await launchImageLibrary(
+      {
+        mediaType: 'photo',
+        quality: 0.5,
+        includeBase64: true,
+        selectionLimit: 10,
+      },
+      response => {
+        if (response.didCancel) {
+          console.log('User cancelled imagepicker');
+        } else if (response.errorCode) {
+          console.log('err', response.errorCode);
+        } else {
+          setSelectedImages(response?.assets);
+
+          response?.assets.map(img => {
+            const formData = new FormData();
+            formData.append('file', `data:${img?.type};base64,${img?.base64}`);
+            formData.append('upload_preset', 'my_preset');
+            handleImageUpload(formData);
+          });
+
+          // urlencoded.append(
+          //   'file',
+
+          // );
+          // urlencoded.append('api_key', '884118737371933');
+          // urlencoded.append('upload_preset', 'my_preset');
+          // urlencoded.append('unsigned', false);
+          // urlencoded.append('public_id', Math.random());
+        }
+      },
+    );
+  };
+
+  const removeImage = index => {
+    const updatedImages = [...selectedImages];
+    updatedImages.splice(index, 1);
+    setSelectedImages(updatedImages);
   };
 
   const Camera = <Entypo name="camera" size={30} color="#000" />;
 
-  const handleStocksChange = text => {
-    const numericValue = text.replace(/[^0-9]/g, '');
-    setStocks(numericValue);
-  };
-
-  const handlesizeQuantityChange = text => {
-    const numericValue = text.replace(/[^0-9]/g, '');
-    setSizeQuantity(numericValue);
-  };
-
   const handleAddProduct = async () => {
     const monster = inputFields.map(val => ({
       quantity: Number(val.quantity),
-      size: val?.size?.value,
+      size: val?.size,
     }));
+    //     console.log('first', inputFields);
+
     const productData = {
       name,
       category,
       subCategory,
       colors,
-      // quantity,
       minQty,
       sizes: monster,
       description,
       stocks: Number(stocks),
       price,
+      image,
     };
-    console.log('<<<<<>>>>>>>', productData);
 
     try {
       const response = await axios.post(
@@ -187,29 +292,39 @@ const AddProduct = ({navigation}) => {
     }
   };
 
-  const handleSizeQuantity = () => {
-    if (size && sizeQuantity) {
-      setSizes([...sizes, {size: size, quantity: Number(sizeQuantity)}]);
-    }
-  };
+  //   console.log('<<<>>>>', inputFields);
 
-  console.log('<<<>>>>', inputFields);
+  const renderSizeItems = item =>
+    inputFields?.map(item => item.size).includes(item.value) ? null : (
+      <View style={styles.item}>
+        <Text style={{color: '#000'}}>{item.label}</Text>
+        {item.value === value && (
+          <AntDesign
+            style={styles.icon}
+            color="black"
+            name="Safety"
+            size={20}
+          />
+        )}
+      </View>
+    );
+
+  const uploadImage = async () => {};
 
   return (
-    <LinearGradient
-      colors={['#ff66c4', '#5170ff']} // Array of gradient colors
-      start={{x: 0, y: 0}} // Start point of the gradient
-      end={{x: 1, y: 0}} // End point of the gradient
-      style={{flex: 1}}>
-      <TouchableOpacity onPress={() => navigation.navigate('MfHome')}>
-        <Ionicons
-          style={{marginTop: -25, marginLeft: 5}}
-          name="arrow-back"
-          size={35}
-          color={'#14489c'}
-        />
-      </TouchableOpacity>
-      <ScrollView style={{marginBottom: 80}}>
+    <View style={{flex: 1, backgroundColor: '#006DFF'}}>
+      <ScrollView style={{marginBottom: 10}}>
+        {data && data?.addProduct && (
+          <TouchableOpacity onPress={() => navigation.navigate('MfHome')}>
+            <Ionicons
+              style={{marginTop: 10, marginLeft: 5}}
+              name="arrow-back"
+              size={35}
+              color={'#fff'}
+            />
+          </TouchableOpacity>
+        )}
+
         <View
           style={{
             width: '98%',
@@ -219,11 +334,16 @@ const AddProduct = ({navigation}) => {
           }}>
           <Text
             style={{
-              marginTop: 80,
-              fontSize: 25,
-              fontWeight: '600',
-              color: '#74a1e8',
-              marginLeft: 25,
+              marginTop: 30,
+              fontSize: 28,
+              fontWeight: '900',
+              color: '#fff',
+              marginLeft: 20,
+              // backgroundColor: '#fff',
+              width: 160,
+              height: 50,
+              alignSelf: 'center',
+              borderRadius: 10,
             }}>
             Add Product
           </Text>
@@ -233,6 +353,7 @@ const AddProduct = ({navigation}) => {
               height: 200,
               alignSelf: 'center',
               borderRadius: 20,
+              marginLeft: 5,
             }}
             source={require('../assets/backk.png')}
           />
@@ -242,27 +363,20 @@ const AddProduct = ({navigation}) => {
           style={{
             fontSize: 20,
             textAlign: 'center',
-            color: '#606263',
+            color: '#ccc',
             fontWeight: '600',
+            textDecorationLine: 'underline',
           }}>
           Fill the product details to add product!
         </Text>
-        <View
-          style={{
-            height: 1,
-            width: '90%',
-            backgroundColor: 'grey',
-            alignSelf: 'center',
-            marginBottom: 20,
-            alignSelf: 'center',
-          }}
-        />
+
         <Text style={styles.label}>Product Category:</Text>
         <Dropdown
           style={[styles.dropdown, isFocus && {borderColor: '#4075c9'}]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
+          itemTextStyle={{color: '#474646'}}
           data={categoryData}
           maxHeight={300}
           labelField="label"
@@ -284,6 +398,7 @@ const AddProduct = ({navigation}) => {
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
+          itemTextStyle={{color: '#474646'}}
           data={subCategoryData}
           maxHeight={200}
           labelField="label"
@@ -306,57 +421,88 @@ const AddProduct = ({navigation}) => {
           onChangeText={text => setName(text)}
           value={name}
         />
+        {/* <Text
+          style={{
+            textAlign: 'center',
+            color: 'black',
+            fontWeight: '600',
+            marginLeft: -20,
+          }}
+          onPress={pickDoc}>
+          Testing the photo
+        </Text> */}
         <Text style={styles.label}>Product Image:</Text>
 
-        {!image ? (
-          <View
-            style={{
-              height: 130,
-              width: '80%',
-              borderColor: '#74a1e8',
-              borderWidth: 1,
-              borderRadius: 8,
-              paddingHorizontal: 8,
-              marginBottom: 10,
-              backgroundColor: '#ededed',
-              marginLeft: 45,
-            }}>
-            <TouchableOpacity onPress={handleImagePicker}>
-              <Text
+        {/* {!selectedImages ? ( */}
+        <View
+          style={{
+            height: 70,
+            width: '80%',
+            borderColor: '#fff',
+            borderWidth: 1,
+            borderRadius: 8,
+            paddingHorizontal: 8,
+            marginBottom: 10,
+            backgroundColor: '#ededed',
+            marginLeft: 45,
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}>
+          <TouchableOpacity onPress={handleImagePicker}>
+            <Entypo
+              style={{marginTop: 10}}
+              name="camera"
+              size={30}
+              color="#000"
+            />
+            <Text
+              style={
+                {
+                  // marginTop: 30,
+                }
+              }>
+              +Add Photo
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            width: '100%',
+            marginTop: 5,
+            paddingLeft: 50,
+          }}>
+          {selectedImages?.map((image, index) => (
+            <View
+              key={image.uri}
+              style={{
+                width: '30%',
+                marginRight: 10,
+                marginBottom: 15,
+              }}>
+              <Image
+                source={{uri: image.uri}}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textAlign: 'center',
-                  margin: 40,
-                }}>
-                {Camera}
-              </Text>
-
-              <Text
-                style={{
-                  textAlign: 'center',
-                  margin: -30,
-                  marginTop: -35,
+                  height: 80,
+                  width: 80,
                   color: 'black',
                   fontWeight: '600',
-                }}>
-                +Add Photo
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <>
-            {selectedImages.map((image, index) => (
-              <Image
-                key={index}
-                source={{uri: image.uri}}
-                style={{width: 100, height: 100, margin: 10}}
+                }}
               />
-            ))}
-            {/* {console.log("image", updatedImage)} */}
-          </>
-        )}
+              <TouchableOpacity
+                onPress={() => removeImage(index)}
+                style={{position: 'absolute', right: 5, top: 5}}>
+                <MaterialIcons name="delete" size={25} color={'#ccc'} />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+
+        {/* ))} */}
+
         <Text style={styles.label}>Total Stocks:</Text>
 
         <TextInput
@@ -364,16 +510,19 @@ const AddProduct = ({navigation}) => {
             width: '80%',
             height: 50,
             borderWidth: 1,
-            borderColor: '#74a1e8',
+            borderColor: '#fff',
+            backgroundColor: '#fff',
             borderRadius: 10,
             marginBottom: 15,
             paddingHorizontal: 15,
             fontSize: 16,
             alignSelf: 'center',
+            color: '#000',
           }}
           placeholder="Enter total stocks"
           placeholderTextColor="#aaa"
           autoCapitalize="none"
+          keyboardType="number-pad"
           onChangeText={text => setStocks(text)}
           value={stocks}
         />
@@ -388,40 +537,40 @@ const AddProduct = ({navigation}) => {
               marginLeft: 20,
             }}>
             <Dropdown
-              style={[styles.sizedropdown, isFocus && {borderColor: '#4075c9'}]}
+              style={[styles.Dropdown, isFocus && {borderColor: '#4075c9'}]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
+              itemTextStyle={{color: '#474646', columnGap: 10}}
               data={sizeData}
               maxHeight={200}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Select size' : 'Select One'}
-              // value={size}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
-              // onChange={item => {
-              //   setSize(item.value);
-              //   setIsFocus(false);
-              // }}
+              renderItem={renderSizeItems}
               value={field.size}
-              onChange={text => handleInputChange(field.id, 'size', text)}
+              onChange={item => handleInputChange(field.id, 'size', item.value)}
             />
             <TextInput
               style={{
                 width: '35%',
                 height: 50,
                 borderWidth: 1,
-                borderColor: '#74a1e8',
+                borderColor: '#fff',
+                backgroundColor: '#fff',
                 borderRadius: 10,
                 marginBottom: 15,
                 paddingHorizontal: 15,
                 fontSize: 16,
                 alignSelf: 'center',
                 marginLeft: 15,
+                color: '#000',
               }}
               placeholder="Enter quantity"
               placeholderTextColor="#aaa"
+              keyboardType="number-pad"
               autoCapitalize="none"
               value={field.quantity}
               onChangeText={text =>
@@ -434,7 +583,7 @@ const AddProduct = ({navigation}) => {
                   style={{marginLeft: 5}}
                   name="add-outline"
                   size={30}
-                  color={'#74a1e8'}
+                  color={'#fff'}
                 />
               </TouchableOpacity>
               {inputFields.length > 1 && (
@@ -443,15 +592,13 @@ const AddProduct = ({navigation}) => {
                     style={{marginLeft: 5, marginTop: -8}}
                     name="remove-outline"
                     size={28}
-                    color={'#74a1e8'}
+                    color={'#fff'}
                   />
                 </TouchableOpacity>
               )}
             </View>
           </View>
         ))}
-        {/* <Text>{sizeQuantityTotal}</Text> */}
-
         {sizes.map((item, index) => (
           <View
             key={index}
@@ -470,7 +617,7 @@ const AddProduct = ({navigation}) => {
             height: 50,
             width: '80%',
             alignSelf: 'center',
-            borderColor: '#74a1e8',
+            borderColor: '#fff',
             borderWidth: 1,
             borderRadius: 8,
             paddingHorizontal: 8,
@@ -505,18 +652,21 @@ const AddProduct = ({navigation}) => {
             width: '80%',
             height: 50,
             borderWidth: 1,
-            borderColor: '#74a1e8',
+            borderColor: '#fff',
+            backgroundColor: '#fff',
             borderRadius: 10,
             marginBottom: 15,
             paddingHorizontal: 15,
             fontSize: 16,
             alignSelf: 'center',
+            color: '#000',
           }}
           placeholder="Enter Price"
           onChangeText={text => setPrice(text)}
           value={price}
           placeholderTextColor="#aaa"
           autoCapitalize="none"
+          keyboardType="number-pad"
         />
         <Text style={styles.label}>Minimum Quantity for Order:</Text>
 
@@ -525,12 +675,14 @@ const AddProduct = ({navigation}) => {
             width: '80%',
             height: 50,
             borderWidth: 1,
-            borderColor: '#74a1e8',
+            borderColor: '#fff',
+            backgroundColor: '#fff',
             borderRadius: 10,
             marginBottom: 15,
             paddingHorizontal: 15,
             fontSize: 16,
             alignSelf: 'center',
+            color: '#000',
           }}
           placeholder="Enter minimum quantity"
           // onChangeText={handleInputChange}
@@ -539,6 +691,7 @@ const AddProduct = ({navigation}) => {
           autoCapitalize="none"
           onChangeText={text => setMinQty(text)}
           value={minQty}
+          keyboardType="number-pad"
         />
         <Text style={styles.label}>Product Description:</Text>
         <TextInput
@@ -546,7 +699,8 @@ const AddProduct = ({navigation}) => {
             width: '80%',
             height: 50,
             borderWidth: 1,
-            borderColor: '#74a1e8',
+            borderColor: '#fff',
+            backgroundColor: '#fff',
             borderRadius: 10,
             marginBottom: 15,
             paddingHorizontal: 15,
@@ -554,6 +708,7 @@ const AddProduct = ({navigation}) => {
             alignSelf: 'center',
             height: 100,
             paddingVertical: 8,
+            color: '#000',
           }}
           placeholder="Enter product description..."
           placeholderTextColor="#aaa"
@@ -570,7 +725,7 @@ const AddProduct = ({navigation}) => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -597,60 +752,70 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 5,
-    color: '#0f387a',
-    marginTop: 10,
+    color: '#fff',
+    marginTop: 25,
     marginLeft: 40,
   },
   input: {
     width: '80%',
     height: 50,
     borderWidth: 1,
-    borderColor: '#74a1e8',
+    borderColor: '#fff',
+    backgroundColor: '#fff',
     borderRadius: 10,
     marginBottom: 15,
     paddingHorizontal: 15,
     fontSize: 16,
     alignSelf: 'center',
+    color: '#000',
   },
   dropdown: {
     height: 50,
     width: '80%',
     alignSelf: 'center',
-    borderColor: '#74a1e8',
+    borderColor: '#fff',
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 8,
     marginBottom: 10,
+    color: '#000',
+    textDecorationColor: '#000',
   },
-  sizedropdown: {
-    width: '40%',
+  Dropdown: {
     height: 50,
-    borderWidth: 1,
-    borderColor: '#74a1e8',
-    borderRadius: 10,
-    marginBottom: 15,
-    paddingHorizontal: 15,
-    fontSize: 16,
+    width: '40%',
     alignSelf: 'center',
+    borderColor: '#fff',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginBottom: 10,
+    color: '#000',
+    textDecorationColor: '#000',
   },
   placeholderStyle: {
     fontSize: 15,
-    color: '#acafb5',
+    color: 'grey',
   },
   selectedTextStyle: {
     fontSize: 16,
+    color: '#000',
   },
   loginButton: {
     width: '50%',
     height: 50,
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
     borderRadius: 30,
+    marginTop: 20,
+    marginBottom: 90,
   },
   loginButtonText: {
-    color: '#fff',
+    color: '#000',
     fontSize: 23,
     fontWeight: 'bold',
   },

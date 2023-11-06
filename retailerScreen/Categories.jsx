@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import ProductTypeCard from '../components/ProductTypeCard';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {useState} from 'react';
 const womenBottom = require('../assets/womenBottom.webp');
 const womenTop = require('../assets/image2.jpeg');
@@ -43,21 +43,21 @@ const FirstRoute = () => {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('womenBottom')}>
           <ProductTypeCard
-            backgroundColor={'#b595bf'}
+            backgroundColor={'#dabce3'}
             image={womenBottom}
             product_name={'Bottom Wear'}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('womenCasual')}>
           <ProductTypeCard
-            backgroundColor={'#b595bf'}
+            backgroundColor={'#dabce3'}
             image={womenCasual}
             product_name={'Casual Wear'}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('womenFormal')}>
           <ProductTypeCard
-            backgroundColor={'#b595bf'}
+            backgroundColor={'#dabce3'}
             image={womenFormal}
             product_name={'Formal Wear'}
           />
@@ -179,10 +179,12 @@ const renderScene = SceneMap({
 });
 
 export default function Categories({navigation}) {
+  const route = useRoute();
+  console.log('>>>>>>', route.params);
   const layout = useWindowDimensions();
   const [selectedTab, setSelectedTab] = useState('');
 
-  const [index, setIndex] = React.useState(0);
+  const [index, setIndex] = React.useState(route?.params?.key || 0);
   const [routes] = React.useState([
     {key: 'first', title: 'Women', value: 'womens wear'},
     {key: 'second', title: 'Men', value: 'mens wear'},
@@ -229,8 +231,9 @@ export default function Categories({navigation}) {
 }
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: '#895cd6',
+    backgroundColor: '#006DFF',
     height: 50,
+    opacity: 0.85,
   },
   tabBarLabel: {
     fontSize: 15,

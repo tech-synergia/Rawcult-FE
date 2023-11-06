@@ -6,11 +6,11 @@ import axios from 'axios';
 import {useEffect} from 'react';
 import {useState} from 'react';
 
-export default function WomenTopScreen({navigation}) {
-  const [womenTopData, setWomenTopData] = useState([]);
+export default function WomenBottomScreen({navigation}) {
+  const [womenBottomData, setWomenBottomData] = useState([]);
   const image8 = require('../assets/womenBottom.webp');
 
-  const WomenTopWearData = async () => {
+  const WomenBottomWearData = async () => {
     const categoryData = {
       category: 'womens wear',
       subCategory: 'bottom wear',
@@ -22,7 +22,7 @@ export default function WomenTopScreen({navigation}) {
         categoryData,
       );
       if (response.status === 200 || 201) {
-        setWomenTopData(response?.data?.product);
+        setWomenBottomData(response?.data?.product);
       } else {
         // Show error message
         Alert.alert('Error', 'Something Went Wrong!');
@@ -33,7 +33,7 @@ export default function WomenTopScreen({navigation}) {
   };
 
   useEffect(() => {
-    WomenTopWearData();
+    WomenBottomWearData();
   });
 
   return (
@@ -56,7 +56,7 @@ export default function WomenTopScreen({navigation}) {
           width: '100%',
           marginBottom: 10,
         }}>
-        WOMEN'S BOTTOM WEAR
+        WOMEN'S BOTTOM WEAR ({womenBottomData?.length})
       </Text>
       <View
         style={{
@@ -68,15 +68,22 @@ export default function WomenTopScreen({navigation}) {
         }}
       />
       <ScrollView>
-        {womenTopData.map((item, index) => (
-          <CategoriesCard
-            key={index}
-            name={item?.name}
-            price={Number(item?.price).toFixed(2)}
-            image={image8}
-            productId={item?._id}
-          />
-        ))}
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '100%',
+            flexWrap: 'wrap',
+          }}>
+          {womenBottomData.map((item, index) => (
+            <CategoriesCard
+              key={index}
+              name={item?.name}
+              price={Number(item?.price).toFixed(2)}
+              image={{uri: item?.image[0]}}
+              productId={item?._id}
+            />
+          ))}
+        </View>
       </ScrollView>
     </View>
   );

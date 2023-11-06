@@ -9,7 +9,9 @@ import {
   TouchableOpacity,
   Alert,
   Modal,
+  BackHandler,
 } from 'react-native';
+import {useRoute, useIsFocused} from '@react-navigation/native';
 import React, {useRef, useState, useEffect} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -19,13 +21,56 @@ import ProductCard from '../components/ProductCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {ActivityIndicator, MD2Colors} from 'react-native-paper';
+import {Header} from '../components/Header';
 
 const ManufacturerHomeScreen = ({navigation}) => {
+  const route = useRoute();
+  const isFocused = useIsFocused();
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [userInfo, setUserInfo] = useState('');
   const [loginToken, setLOginToken] = useState('');
+  const [SearchData, setSearchData] = useState([]);
+  const [query, setQuery] = useState('');
+  const [listData, setListData] = useState([]);
+
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {text: 'YES', onPress: () => BackHandler.exitApp()},
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`https://rawcult-be.vercel.app/products/search?q=${query}`)
+      .then(response => {
+        const result = response.data.map(val => ({
+          id: val._id,
+          title: val.name,
+        }));
+        setSearchData([...result, {title: 'view all'}]);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, [query]);
+
   let user;
 
   useEffect(() => {
@@ -38,14 +83,6 @@ const ManufacturerHomeScreen = ({navigation}) => {
       // console.log("njnjbjbjbjbj", getToken);
     })();
   }, []);
-  const image1 = require('../assets/first.jpg');
-  const image2 = require('../assets/image3.jpeg');
-  const image3 = require('../assets/image2.jpeg');
-  const image4 = require('../assets/image3.jpeg');
-  const image5 = require('../assets/third.jpg');
-  const image6 = require('../assets/second.jpg');
-  const image7 = require('../assets/third.jpg');
-  const image8 = require('../assets/forth.jpg');
 
   const id = userInfo?.userId;
 
@@ -62,6 +99,7 @@ const ManufacturerHomeScreen = ({navigation}) => {
       ); // Replace with your API endpoint
       if (response.status === 200) {
         setData(response?.data?.products);
+        setListData(response?.data?.products);
       } else {
         Alert.alert('Error');
       }
@@ -70,69 +108,61 @@ const ManufacturerHomeScreen = ({navigation}) => {
       console.error('Error fetching data:', error);
     }
   };
-  console.log('daaa', data);
+  // console.log('imageeeeeee', data[0].image.length);
 
   useEffect(() => {
     if (!userInfo) {
       return;
     }
-    fetchData();
-  }, [userInfo]);
 
-  const carouselData = [
-    {
-      number: 1,
-      imageSource: require('../assets/first.jpg'), // Replace with your image sources
-    },
-    {
-      number: 2,
-      imageSource: require('../assets/second.jpg'), // Replace with your image sources
-    },
-    {
-      number: 3,
-      imageSource: require('../assets/third.jpg'), // Replace with your image sources
-    },
-    {
-      number: 4,
-      imageSource: require('../assets/forth.jpg'),
-      // Replace with your image sources
-    },
-    {
-      number: 5,
-      imageSource: require('../assets/fifth.jpg'),
-      // Replace with your image sources
-    },
-    // ... add more data for each slide
-  ];
+    fetchData();
+  }, [userInfo, isFocused]);
+
+  const handelSearch = value => {
+    if (!value) {
+      fetchData();
+      setQuery('');
+      return;
+    }
+    setQuery(value);
+    const updatedData = listData.filter(val => {
+      const name = val.name.toLowerCase();
+      return name.includes(value.toLowerCase());
+    });
+    setData(updatedData);
+  };
 
   return (
-    <View style={{marginBottom: 52, marginTop: 20}}>
-      <View style={{marginLeft: 10, height: 40}}>
-        <Text style={{fontSize: 15, fontWeight: '800'}}>
-          <MaterialCommunityIcons name="hand-wave" size={25} color="#9a2aeb" />
-          {'  '}
-          Hello!
-          {/* {userInfo.name} */}
-        </Text>
+    <View style={{marginBottom: 52}}>
+      <View style={{}}>
+        <Header />
       </View>
       <ImageBackground
         source={require('../assets/background.webp')}
         style={{
-          height: 150,
+          height: 160,
           width: '95%',
           marginLeft: 18,
           paddingTop: 25,
           borderRadius: 30,
+          marginTop: 5,
         }}>
-        <TouchableOpacity onPress={() => navigation.navigate('add')}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('add', {addProduct: true})}>
           <Ionicons
             style={{marginLeft: 85}}
             name="add-circle-outline"
             size={60}
-            color={'#9a2aeb'}
+            color={'#006DFF'}
           />
         </TouchableOpacity>
-        <Text style={{marginLeft: 50, fontWeight: '700', color: '#9a2aeb'}}>
+        <Text
+          style={{
+            marginLeft: 50,
+            fontWeight: '700',
+            color: '#006DFF',
+            fontSize: 17,
+          }}>
           Add a new product
         </Text>
       </ImageBackground>
@@ -147,10 +177,11 @@ const ManufacturerHomeScreen = ({navigation}) => {
           marginTop: 10,
         }}>
         <Searchbar
-          style={{width: '88%'}}
-          placeholder="Search your Products"
-          // onChangeText={onChangeSearch}
-          value={searchQuery}
+          style={{width: '88%', borderRadius: 30}}
+          placeholder="Search Products"
+          value={query}
+          onChangeText={handelSearch}
+          // onIconPress={handelSearch}
         />
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Ionicons
@@ -172,13 +203,12 @@ const ManufacturerHomeScreen = ({navigation}) => {
           style={{
             position: 'absolute',
             height: 'auto',
-            bottom: 390,
+            top: 300,
             borderColor: '#95359c',
             borderRadius: 10,
             width: '50%',
-            alignSelf: 'flex-end',
             backgroundColor: '#fff',
-            marginRight: 5,
+            right: 10,
           }}>
           <TouchableOpacity
             onPress={() => setModalVisible(false)}
@@ -199,6 +229,14 @@ const ManufacturerHomeScreen = ({navigation}) => {
               }}>
               Sort By
             </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              const sortedProducts = data
+                .slice()
+                .sort((a, b) => a.price - b.price);
+              setData(sortedProducts);
+            }}>
             <View
               style={{
                 height: 1,
@@ -208,18 +246,17 @@ const ManufacturerHomeScreen = ({navigation}) => {
                 marginTop: 10,
               }}
             />
-          </View>
-
-          <Text
-            style={{
-              fontSize: 17,
-              fontWeight: '500',
-              marginTop: 10,
-              marginBottom: 10,
-              marginLeft: 5,
-            }}>
-            Price--Low to High
-          </Text>
+            <Text
+              style={{
+                fontSize: 17,
+                fontWeight: '500',
+                marginTop: 10,
+                marginBottom: 10,
+                marginLeft: 5,
+              }}>
+              Price--Low to High
+            </Text>
+          </TouchableOpacity>
           <View
             style={{
               height: 0.8,
@@ -228,16 +265,24 @@ const ManufacturerHomeScreen = ({navigation}) => {
               alignSelf: 'center',
             }}
           />
-          <Text
-            style={{
-              fontSize: 17,
-              fontWeight: '500',
-              marginTop: 10,
-              marginBottom: 20,
-              marginLeft: 5,
+          <TouchableOpacity
+            onPress={() => {
+              const sortedProducts = data
+                .slice()
+                .sort((a, b) => b.price - a.price);
+              setData(sortedProducts);
             }}>
-            Price--High to Low
-          </Text>
+            <Text
+              style={{
+                fontSize: 17,
+                fontWeight: '500',
+                marginTop: 10,
+                marginBottom: 20,
+                marginLeft: 5,
+              }}>
+              Price--High to Low
+            </Text>
+          </TouchableOpacity>
           <View
             style={{
               height: 0.8,
@@ -259,13 +304,15 @@ const ManufacturerHomeScreen = ({navigation}) => {
                   display: 'flex',
                   flexDirection: 'row',
                   flexWrap: 'wrap',
+                  marginBottom: 100,
                 }}>
+                {console.log('&&&&&&&&&***************>>>>>', data)}
                 {data.map((item, index) => (
                   <ProductCard
                     key={index}
                     product_name={item?.name}
-                    image={image2}
-                    product_price={item?.price}
+                    image={{uri: item?.image[0]}}
+                    product_price={Number(item?.price).toFixed(2)}
                     productId={item?._id}
                     stocks={item?.stocks}
                   />

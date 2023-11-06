@@ -10,16 +10,23 @@ import {
   ImageBackground,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from '../components/CustomLoader';
 import LinearGradient from 'react-native-linear-gradient';
+import {
+  GoogleSignin,
+  statusCodes,
+  GoogleSigninButton,
+} from '@react-native-google-signin/google-signin';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loaderVisible, setLoaderVisible] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
 
   const showLoader = () => {
     setLoaderVisible(true);
@@ -31,18 +38,25 @@ const LoginScreen = ({navigation}) => {
   // const [loggedUser, setLoggedUser] = useState("");
 
   useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '754633465153-vi41osv7hr95kej2qjhu1kvifiqhr41q.apps.googleusercontent.com',
+      offlineAccess: true,
+    });
     (async () => {
       const user = await AsyncStorage.getItem('user');
       const loggedUser = JSON.parse(user);
       if (loggedUser && loggedUser.userId) {
         if (
           loggedUser.role === 'manufacturer' &&
-          loggedUser.firstTimeLogin === false
+          loggedUser.firstTimeLogin === false &&
+          loggedUser.isApproved === true
         ) {
           navigation.navigate('MfHome');
         } else if (
           loggedUser.role === 'retailer' &&
-          loggedUser.firstTimeLogin === false
+          !loggedUser?.firstTimeLogin &&
+          loggedUser?.isApproved
         ) {
           navigation.navigate('ReatilerHome');
         }
@@ -51,13 +65,37 @@ const LoginScreen = ({navigation}) => {
     })();
   }, []);
 
-  const handleGoogleLogin = async () => {
+  async function onGoogleButtonPress() {
     try {
-      await axios.get('https://rawcult-be.vercel.app/auth/google'); // Replace with your API endpoint
+      console.log('startting google api');
+      // await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      await GoogleSignin.hasPlayServices();
+      // Get the users ID token
+      // const {idToken} = await GoogleSignin.signIn();
+      const userDetails = await GoogleSignin.signIn();
+      // setUserInfo(userDetails);
+      console.log(userDetails, 'goooooooggggllllleeee');
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      console.log(
+        '🚀 ~ file: LoginScreen.jsx:80 ~ onGoogleButtonPress ~ googleCredential:',
+        googleCredential,
+      );
+      // Sign-in the user with the credential
+      return auth().signInWithCredential(googleCredential);
     } catch (error) {
-      console.error('Error:', error);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        console.log(error.message);
+        // some other error happened
+      }
     }
-  };
+  }
 
   const handleLogin = async () => {
     const userData = {email, password};
@@ -67,7 +105,7 @@ const LoginScreen = ({navigation}) => {
         'https://rawcult-be.vercel.app/auth/login',
         userData,
       );
-      console.log('first', response);
+      console.log('first', response.data);
 
       if (response.status === 200) {
         const token = response.data.accessToken;
@@ -99,6 +137,7 @@ const LoginScreen = ({navigation}) => {
           response.data.user.firstTimeLogin === false &&
           response.data.user.isApproved === false
         ) {
+          console.log('pooojaaaa', response.data.user.isApproved);
           Alert.alert('Sign In Successful', 'You are now signed in.', [
             // { text: "OK", onPress: () => navigation.navigate("retailerForm") },
             {text: 'OK', onPress: () => navigation.navigate('formApproval')},
@@ -114,7 +153,8 @@ const LoginScreen = ({navigation}) => {
           ]);
         } else if (
           response.data.user.role === 'manufacturer' &&
-          response.data.user.firstTimeLogin === false
+          response.data.user.firstTimeLogin === false &&
+          response.data.user.isApproved === true
         ) {
           Alert.alert('Sign In Successful', 'You are now signed in.', [
             // { text: "OK", onPress: () => navigation.navigate("retailerForm") },
@@ -122,7 +162,8 @@ const LoginScreen = ({navigation}) => {
           ]);
         } else if (
           response.data.user.role === 'retailer' &&
-          response.data.user.firstTimeLogin === false
+          response.data.user.firstTimeLogin === false &&
+          response.data.user.isApproved === true
         ) {
           Alert.alert('Sign In Successful', 'You are now signed in.', [
             // { text: "OK", onPress: () => navigation.navigate("retailerForm") },
@@ -155,10 +196,7 @@ const LoginScreen = ({navigation}) => {
   };
   return (
     // <View style={styles.container}>
-    <LinearGradient
-      colors={['#ff66c4', '#5170ff']} // Array of gradient colors
-      start={{x: 0, y: 0}} // Start point of the gradient
-      end={{x: 1, y: 0}} // End point of the gradient
+    <View // End point of the gradient
       style={styles.container}>
       {/* <View
         style={{
@@ -257,6 +295,7 @@ const LoginScreen = ({navigation}) => {
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Entypo name="login" color={'#000'} size={20} />
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
       <CustomLoader
@@ -268,7 +307,7 @@ const LoginScreen = ({navigation}) => {
         <Text
           style={{
             marginTop: 15,
-            color: 'grey',
+            color: '#ccc',
             fontSize: 15,
             fontWeight: 'bold',
           }}>
@@ -286,28 +325,20 @@ const LoginScreen = ({navigation}) => {
       {/* Facebook Login */}
       <View style={styles.socialIconsContainer}>
         {/* Google Login */}
-        <TouchableOpacity onPress={handleGoogleLogin}>
-          <View
-            style={{
-              height: 'auto',
-              width: 'auto',
-              borderRadius: 10,
-              backgroundColor: '#f5d5d6',
-              display: 'flex',
-              flexDirection: 'row',
-            }}>
-            <Ionicons
-              name="logo-google"
-              size={25}
-              color="#DB4437"
-              style={styles.socialIcon}
-              onPress={() => {
-                // Implement your Google login logic here
-              }}
+        <TouchableOpacity>
+          <View>
+            <GoogleSigninButton
+              onPress={() =>
+                onGoogleButtonPress()
+                  .then(() => {
+                    console.log('user signed in using google');
+                    navigation.navigate('ReatilerHome');
+                  })
+                  .catch(error => {
+                    console.log(error);
+                  })
+              }
             />
-            <Text style={{marginTop: 15, marginRight: 15}}>
-              Continue with Google
-            </Text>
           </View>
         </TouchableOpacity>
 
@@ -324,7 +355,7 @@ const LoginScreen = ({navigation}) => {
           }}>
           <Text
             style={{
-              color: 'grey',
+              color: '#ccc',
               fontSize: 17,
               fontWeight: '500',
               textDecorationLine: 'underline',
@@ -353,7 +384,7 @@ const LoginScreen = ({navigation}) => {
           </Text>
         </View>
       </TouchableOpacity> */}
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -362,7 +393,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#006DFF',
     paddingHorizontal: 20,
   },
   logo: {
@@ -385,25 +416,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
     backgroundColor: '#fff',
+    borderColor: '#fff',
   },
   loginButton: {
     width: '80%',
     height: 50,
-    backgroundColor: '#966dc9',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
+    flexDirection: 'row',
   },
   loginButtonText: {
-    color: '#fff',
+    color: '#000',
     fontSize: 18,
     fontWeight: 'bold',
+    marginLeft: 10,
   },
   createAccountButton: {
     marginTop: 15,
   },
   createAccountText: {
-    color: '#007bff',
+    color: '#f2f9fc',
     fontSize: 15,
     fontWeight: '500',
     textDecorationLine: 'underline',
@@ -436,7 +470,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   forgotPasswordText: {
-    color: 'grey',
+    color: '#ccc',
     fontSize: 16,
     fontWeight: 'bold',
     textDecorationLine: 'underline',
@@ -449,6 +483,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 15,
     backgroundColor: '#fff',
+    borderColor: '#fff',
   },
   passwordInput: {
     flex: 1,

@@ -7,7 +7,7 @@ const ProductTypeCard = ({image, product_name, backgroundColor}) => {
       style={{
         height: 'auto',
         // padding: 15,
-        width: 390,
+        width: '88%',
         height: 192,
         borderRadius: 10,
         borderWidth: 1,
@@ -37,6 +37,7 @@ const ProductTypeCard = ({image, product_name, backgroundColor}) => {
         style={{
           width: 150,
           height: 190,
+          marginRight: -5,
           borderTopLeftRadius: 50,
           borderBottomLeftRadius: 50,
           // marginLeft: 71,

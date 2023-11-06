@@ -1,4 +1,4 @@
-import {View, Text} from 'react-native';
+import {View, Text, TouchableHighlight} from 'react-native';
 import React from 'react';
 
 const SizeCard = ({size, backgroundColor, textColor}) => {
@@ -17,7 +17,7 @@ const SizeCard = ({size, backgroundColor, textColor}) => {
           textAlign: 'center',
           marginTop: 10,
           fontWeight: '600',
-          color: {textColor},
+          color: '#000',
         }}>
         {size}
       </Text>

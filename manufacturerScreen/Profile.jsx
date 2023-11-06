@@ -96,6 +96,7 @@ const Profile = ({navigation}) => {
           <FontAwesome
             name="user-circle"
             size={50}
+            color={'#313233'}
             style={{
               height: 60,
               width: 60,
@@ -111,6 +112,7 @@ const Profile = ({navigation}) => {
             style={{
               fontSize: 18,
               fontWeight: '600',
+              color: 'grey',
             }}>
             {userInfo?.name}
           </Text>
@@ -132,29 +134,29 @@ const Profile = ({navigation}) => {
           alignSelf: 'center',
         }}
       />
-      <View
-        style={{
-          backgroundColor: '#f0f1f2',
-          padding: 10,
-          flexDirection: 'row',
-          marginTop: 15,
-          marginBottom: 10,
-        }}>
-        <TouchableOpacity onPress={() => navigation.navigate('allOrders')}>
-          <Ionicons name="reader" size={30} />
-        </TouchableOpacity>
-        <Text
+      <TouchableOpacity onPress={() => navigation.navigate('allOrders')}>
+        <View
           style={{
-            textAlign: 'center',
-            fontSize: 17,
-            fontWeight: '400',
-            color: '#000',
-            marginTop: 3,
-            marginLeft: 10,
+            backgroundColor: '#f0f1f2',
+            padding: 10,
+            flexDirection: 'row',
+            marginTop: 15,
+            marginBottom: 10,
           }}>
-          All Orders
-        </Text>
-      </View>
+          <Ionicons name="reader" size={30} color={'#313233'} />
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 17,
+              fontWeight: '400',
+              color: '#000',
+              marginTop: 3,
+              marginLeft: 10,
+            }}>
+            All Orders
+          </Text>
+        </View>
+      </TouchableOpacity>
       <View
         style={{
           height: 0.8,
@@ -163,30 +165,66 @@ const Profile = ({navigation}) => {
           alignSelf: 'center',
         }}
       />
+      <TouchableOpacity onPress={() => navigation.navigate('Help')}>
+        <View
+          style={{
+            backgroundColor: '#f0f1f2',
+            padding: 10,
+            flexDirection: 'row',
+            marginTop: 15,
+            marginBottom: 10,
+          }}>
+          <MaterialCommunityIcons
+            name="phone-in-talk"
+            size={30}
+            color={'#313233'}
+          />
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 17,
+              fontWeight: '400',
+              color: '#000',
+              marginTop: 3,
+              marginLeft: 10,
+            }}>
+            Help Centre
+          </Text>
+        </View>
+      </TouchableOpacity>
 
       <View
         style={{
-          backgroundColor: '#f0f1f2',
-          padding: 10,
-          flexDirection: 'row',
-          marginTop: 15,
-          marginBottom: 10,
-        }}>
-        <TouchableOpacity onPress={() => navigation.navigate('help')}>
-          <MaterialCommunityIcons name="phone-in-talk" size={30} />
-        </TouchableOpacity>
-        <Text
+          height: 0.8,
+          width: '100%',
+          backgroundColor: '#dee0e3',
+          alignSelf: 'center',
+        }}
+      />
+      <TouchableOpacity onPress={() => navigation.navigate('Privacy')}>
+        <View
           style={{
-            textAlign: 'center',
-            fontSize: 17,
-            fontWeight: '400',
-            color: '#000',
-            marginTop: 3,
-            marginLeft: 10,
+            backgroundColor: '#f0f1f2',
+            padding: 10,
+            flexDirection: 'row',
+            marginTop: 15,
+            marginBottom: 10,
           }}>
-          Help Centre
-        </Text>
-      </View>
+          <Ionicons name="shield-checkmark" size={30} color={'#313233'} />
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 17,
+              fontWeight: '400',
+              color: '#000',
+              marginTop: 3,
+              marginLeft: 10,
+            }}>
+            Privacy Policy
+          </Text>
+        </View>
+      </TouchableOpacity>
+
       <View
         style={{
           height: 0.8,
@@ -195,29 +233,30 @@ const Profile = ({navigation}) => {
           alignSelf: 'center',
         }}
       />
-      <View
-        style={{
-          backgroundColor: '#f0f1f2',
-          padding: 10,
-          flexDirection: 'row',
-          marginTop: 15,
-          marginBottom: 10,
-        }}>
-        <TouchableOpacity onPress={() => navigation.navigate('privacy')}>
-          <Ionicons name="shield-checkmark" size={30} />
-        </TouchableOpacity>
-        <Text
+      <TouchableOpacity onPress={() => navigation.navigate('About')}>
+        <View
           style={{
-            textAlign: 'center',
-            fontSize: 17,
-            fontWeight: '400',
-            color: '#000',
-            marginTop: 3,
-            marginLeft: 10,
+            backgroundColor: '#f0f1f2',
+            padding: 10,
+            flexDirection: 'row',
+            marginTop: 15,
+            marginBottom: 10,
           }}>
-          Privacy Policy
-        </Text>
-      </View>
+          <FontAwesome name="address-card" size={30} color={'#313233'} />
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 17,
+              fontWeight: '400',
+              color: '#000',
+              marginTop: 3,
+              marginLeft: 10,
+            }}>
+            About Us
+          </Text>
+        </View>
+      </TouchableOpacity>
+
       <View
         style={{
           height: 0.8,
@@ -226,29 +265,30 @@ const Profile = ({navigation}) => {
           alignSelf: 'center',
         }}
       />
-      <View
-        style={{
-          backgroundColor: '#f0f1f2',
-          padding: 10,
-          flexDirection: 'row',
-          marginTop: 15,
-          marginBottom: 10,
-        }}>
-        <TouchableOpacity onPress={() => navigation.navigate('setting')}>
-          <Ionicons name="settings" size={28} />
-        </TouchableOpacity>
-        <Text
+      <TouchableOpacity onPress={() => navigation.navigate('setting')}>
+        <View
           style={{
-            textAlign: 'center',
-            fontSize: 17,
-            fontWeight: '400',
-            color: '#000',
-            marginTop: 3,
-            marginLeft: 10,
+            backgroundColor: '#f0f1f2',
+            padding: 10,
+            flexDirection: 'row',
+            marginTop: 15,
+            marginBottom: 10,
           }}>
-          Settings
-        </Text>
-      </View>
+          <Ionicons name="settings" size={28} color={'#313233'} />
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 17,
+              fontWeight: '400',
+              color: '#000',
+              marginTop: 3,
+              marginLeft: 10,
+            }}>
+            Settings
+          </Text>
+        </View>
+      </TouchableOpacity>
+
       <View
         style={{
           height: 0.8,
@@ -267,7 +307,7 @@ const Profile = ({navigation}) => {
           marginBottom: 10,
         }}>
         <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleLogout}>
-          <Ionicons name="log-out" size={30} />
+          <Ionicons name="log-out" size={30} color={'#313233'} />
           <Text
             style={{
               textAlign: 'center',

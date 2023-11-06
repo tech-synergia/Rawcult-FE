@@ -15,17 +15,17 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const ForgetPassword = ({navigation}) => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const handleToggleMode = () => {
-    setIsLoginMode(prevMode => !prevMode);
-  };
+  const handleLogin = () => {
+    const userEmail = email;
+    if (userEmail) {
+      Alert.alert('Link sent', 'Check your email for code and try login.', [
+        {text: 'OK', onPress: navigation.navigate('Signin')},
+      ]);
+    } else {
+      Alert.alert('Please provide correct email');
+    }
 
-  const handleLogin = async () => {
-    Alert.alert('Link has been sent to your Email', [
-      {text: 'OK', onPress: () => navigation.navigate('Signin')},
-    ]);
     // const userData = { email, password };
     // try {
     //   const response = await axios.post(
@@ -64,27 +64,10 @@ const ForgetPassword = ({navigation}) => {
     // }
   };
 
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
-
-  const handleForgotPassword = () => {
-    // Implement your forgot password logic here
-  };
-  const handleCreateAccount = () => {
-    navigation.navigate('Signup');
-
-    // Implement navigation to the Create Account screen here
-    // Example: navigation.navigate('CreateAccount');
-  };
   return (
     // <View style={styles.container}>
     <>
-      <LinearGradient
-        colors={['#ff66c4', '#5170ff']} // Array of gradient colors
-        start={{x: 0, y: 0}} // Start point of the gradient
-        end={{x: 1, y: 0}} // End point of the gradient
-      >
+      <View style={{backgroundColor: '#006DFF'}}>
         <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
           <Ionicons
             style={{
@@ -97,12 +80,8 @@ const ForgetPassword = ({navigation}) => {
             color={'#fff'}
           />
         </TouchableOpacity>
-      </LinearGradient>
-      <LinearGradient
-        colors={['#ff66c4', '#5170ff']} // Array of gradient colors
-        start={{x: 0, y: 0}} // Start point of the gradient
-        end={{x: 1, y: 0}} // End point of the gradient
-        style={styles.container}>
+      </View>
+      <View style={styles.container}>
         <Text style={styles.logo}>Forgot Password</Text>
         <Text
           style={{
@@ -111,7 +90,7 @@ const ForgetPassword = ({navigation}) => {
             marginBottom: 30,
             fontSize: 15,
             fontWeight: '600',
-            color: '#6e6d70',
+            color: '#ccc',
           }}>
           Please, enter your email address.You will receive a link to create a
           new password via email.
@@ -123,14 +102,14 @@ const ForgetPassword = ({navigation}) => {
             fontWeight: '500',
             marginBottom: 5,
             alignSelf: 'flex-start',
-            color: '#6e6d70',
+            color: '#fff',
             marginTop: 10,
           }}>
           Email
         </Text>
         <TextInput
           style={styles.input}
-          placeholder="Email"
+          placeholder="Enter your email"
           placeholderTextColor="#aaa"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -143,7 +122,7 @@ const ForgetPassword = ({navigation}) => {
             Send
           </Text>
         </TouchableOpacity>
-      </LinearGradient>
+      </View>
     </>
   );
 };
@@ -153,7 +132,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#006DFF',
     paddingHorizontal: 20,
   },
   logo: {
@@ -161,7 +140,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 20,
     marginTop: -40,
-    color: '#000',
+    color: '#fff',
     alignSelf: 'flex-start',
   },
   logoImage: {
@@ -171,23 +150,24 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#fff',
     borderRadius: 10,
     marginBottom: 15,
     paddingHorizontal: 15,
     fontSize: 16,
+    backgroundColor: '#fff',
   },
   loginButton: {
-    width: '80%',
+    width: '50%',
     height: 50,
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
     marginTop: 20,
   },
   loginButtonText: {
-    color: '#fff',
+    color: '#000',
     fontSize: 18,
     fontWeight: 'bold',
   },

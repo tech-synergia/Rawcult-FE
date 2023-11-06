@@ -1,9 +1,18 @@
-import {View, Text} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Setting = () => {
+const Setting = ({navigation}) => {
   return (
     <View style={{marginTop: 20, marginBottom: 45}}>
+      <TouchableOpacity onPress={() => navigation.navigate('MfHome')}>
+        <Ionicons
+          style={{marginLeft: 5, color: 'blue'}}
+          name="arrow-back"
+          size={35}
+          color={'#fff'}
+        />
+      </TouchableOpacity>
       <Text
         style={{
           fontSize: 18,
@@ -13,6 +22,7 @@ const Setting = () => {
           height: 25,
           width: '100%',
           marginBottom: 5,
+          marginTop: -10,
         }}>
         SETTINGS
       </Text>
@@ -22,8 +32,6 @@ const Setting = () => {
           width: '100%',
           backgroundColor: '#d2cdd4',
           alignSelf: 'center',
-          marginBottom: 10,
-          marginTop: 10,
         }}
       />
     </View>

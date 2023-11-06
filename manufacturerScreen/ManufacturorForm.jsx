@@ -15,8 +15,13 @@ import axios from 'axios';
 import {TextInput} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {
+  launchImageLibrary,
+  ImageLibraryOptions,
+} from 'react-native-image-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const ManufacturorForm = ({navigation}) => {
   const [name, setName] = useState('');
@@ -28,9 +33,10 @@ const ManufacturorForm = ({navigation}) => {
   const [aadhaarOrPan, setAadhaarOrPan] = useState('');
   const [productDeal, setProductDeal] = useState('');
   const [bankAccount, setBankAccount] = useState('');
-  const [image, setImage] = useState(null);
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [image, setImage] = useState([]);
+  const [selectedImages, setSelectedImages] = useState(null);
   const [loginToken, setLoginToken] = useState('');
+  const [imageFormat, setImageFormat] = useState('');
 
   const Camera = (
     <MaterialCommunityIcons name="camera-plus" size={30} color="#000" />
@@ -43,9 +49,66 @@ const ManufacturorForm = ({navigation}) => {
     })();
   }, []);
 
+  const handleImageUpload = urlencoded => {
+    var requestOptions = {
+      method: 'POST',
+      body: urlencoded,
+      redirect: 'follow',
+    };
+    fetch(
+      'https://api.cloudinary.com/v1_1/dfrxndgy1/image/upload',
+      requestOptions,
+    )
+      .then(response => {
+        console.log('response checkig', response);
+        return response.json();
+      })
+      .then(result => {
+        console.log('resulting', result);
+        setImage(prev => [...prev, result.secure_url]);
+      })
+      .catch(error => console.log('error', error));
+  };
+
   const handleImagePicker = async () => {
-    let result = await launchImageLibrary({mediaType: 'photo'});
-    setSelectedImages(result);
+    await launchImageLibrary(
+      {
+        mediaType: 'photo',
+        quality: 0.5,
+        includeBase64: true,
+        selectionLimit: 10,
+      },
+      response => {
+        if (response.didCancel) {
+          console.log('User cancelled imagepicker');
+        } else if (response.errorCode) {
+          console.log('err', response.errorCode);
+        } else {
+          setSelectedImages(response?.assets);
+
+          response?.assets.map(img => {
+            const formData = new FormData();
+            formData.append('file', `data:${img?.type};base64,${img?.base64}`);
+            formData.append('upload_preset', 'my_preset');
+            handleImageUpload(formData);
+          });
+
+          // urlencoded.append(
+          //   'file',
+
+          // );
+          // urlencoded.append('api_key', '884118737371933');
+          // urlencoded.append('upload_preset', 'my_preset');
+          // urlencoded.append('unsigned', false);
+          // urlencoded.append('public_id', Math.random());
+        }
+      },
+    );
+  };
+  const removeImage = index => {
+    const updatedImages = [...selectedImages];
+    updatedImages.splice(index, 1);
+    setSelectedImages(updatedImages);
   };
 
   const handleSubmit = async () => {
@@ -60,7 +123,9 @@ const ManufacturorForm = ({navigation}) => {
       productDeal,
       bankAccount,
       firstTimeLogin: false,
+      image,
     };
+    console.log('formmm', payload);
 
     try {
       const response = await axios.patch(
@@ -80,19 +145,20 @@ const ManufacturorForm = ({navigation}) => {
         Alert.alert('please fill correct Data');
       }
     } catch (error) {
-      Alert.alert('Error', 'Network error occurred.');
+      Alert.alert('Error', error?.response?.data?.msg);
     }
     // navigation.navigate("formApproval");
   };
 
   return (
-    <LinearGradient
-      colors={['#b151e8', '#30044a']} // Array of gradient colors
-      start={{x: 0, y: 0}} // Start point of the gradient
-      end={{x: 1, y: 0}} // End point of the gradient
-      style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: '#006DFF'}}>
       <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-        <Ionicons style={{marginLeft: 20}} name="arrow-back-circle" size={35} />
+        <Ionicons
+          style={{marginLeft: 10}}
+          name="arrow-back-circle"
+          color={'#fff'}
+          size={35}
+        />
       </TouchableOpacity>
       <View
         style={{
@@ -142,10 +208,10 @@ const ManufacturorForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Your Name
+            Your Name <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -160,10 +226,11 @@ const ManufacturorForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Your Shop/Manufacturer Unit Name
+            Your Shop/Manufacturer Unit Name{' '}
+            <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -178,10 +245,11 @@ const ManufacturorForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Your Unit Address
+            Your Unit Address{' '}
+            <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -196,10 +264,10 @@ const ManufacturorForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Phone Number
+            Phone Number <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -215,10 +283,11 @@ const ManufacturorForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Your Email Address
+            Your Email Address{' '}
+            <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -234,10 +303,10 @@ const ManufacturorForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Your GST Number
+            Your GST Number <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -252,10 +321,11 @@ const ManufacturorForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Your Aadhar/PAN Card Number
+            Your Aadhar/PAN Card Number{' '}
+            <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -270,68 +340,85 @@ const ManufacturorForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Upload Product Image
+            Upload Aadhar/PAN Image
           </Text>
-          {!image ? (
+          <View
+            style={{
+              height: 70,
+              width: '100%',
+              borderColor: '#fff',
+              borderWidth: 1,
+              borderRadius: 8,
+              paddingHorizontal: 8,
+              marginBottom: 10,
+              backgroundColor: '#ededed',
+              flexDirection: 'row',
+              justifyContent: 'center',
+            }}>
+            <TouchableOpacity onPress={handleImagePicker}>
+              <Entypo
+                style={{marginTop: 10}}
+                name="camera"
+                size={30}
+                color="#000"
+              />
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: 'black',
+                  fontWeight: '600',
+                  marginLeft: -20,
+                  // marginTop: 30,
+                }}>
+                +Add Photo
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {/* ) : ( */}
+          {selectedImages?.map((image, index) => (
             <View
+              key={image.uri}
               style={{
-                height: 100,
-                width: '100%',
-                borderRadius: 5,
                 paddingHorizontal: 8,
                 marginBottom: 10,
-                backgroundColor: '#ededed',
+                marginLeft: 45,
+                flexDirection: 'row',
               }}>
-              <TouchableOpacity onPress={handleImagePicker}>
-                <Text
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    textAlign: 'center',
-                    margin: 40,
-                  }}>
-                  {Camera}
-                </Text>
-
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    margin: -30,
-                    marginTop: -50,
-                    color: 'black',
-                    fontWeight: '600',
-                  }}>
-                  {Camera}
-                  Add Photo
-                </Text>
+              <Image
+                source={{uri: image.uri}}
+                style={{
+                  height: 100,
+                  width: 120,
+                  marginTop: 5,
+                  color: 'black',
+                  fontWeight: '600',
+                  // marginLeft: 10,
+                }}
+              />
+              <TouchableOpacity onPress={() => removeImage(index)}>
+                <MaterialIcons
+                  style={{marginTop: 45}}
+                  name="delete"
+                  size={25}
+                  color={'#000'}
+                />
               </TouchableOpacity>
             </View>
-          ) : (
-            <>
-              {selectedImages.map((image, index) => (
-                <Image
-                  key={index}
-                  source={{uri: image.uri}}
-                  style={{width: 100, height: 100, margin: 10}}
-                />
-              ))}
-              {/* {console.log("image", updatedImage)} */}
-            </>
-          )}
+          ))}
           <Text
             style={{
               fontSize: 16,
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Products You deal in
+            Products You deal in{' '}
+            <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -346,10 +433,11 @@ const ManufacturorForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Bank Account Details
+            Bank Account Details{' '}
+            <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -358,15 +446,13 @@ const ManufacturorForm = ({navigation}) => {
             onChangeText={text => setBankAccount(text)}
             value={bankAccount}
           />
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText} onPress={handleSubmit}>
-              Submit
-            </Text>
+          <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
+            <Text style={styles.loginButtonText}>Submit</Text>
           </TouchableOpacity>
         </View>
         {/* </View> */}
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -404,14 +490,15 @@ const styles = StyleSheet.create({
   loginButton: {
     width: '50%',
     height: 50,
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
     marginBottom: 20,
+    marginTop: 20,
   },
   loginButtonText: {
-    color: '#fff',
+    color: '#000',
     fontSize: 18,
     fontWeight: 'bold',
   },

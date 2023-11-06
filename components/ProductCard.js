@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableHighlight,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -82,17 +83,28 @@ const ProductCard = ({
           }}>
           <FontAwesome name="rupee" size={14} /> {product_price}
         </Text>
-        <Text
-          style={{
-            fontSize: 15,
-            color: '#000',
-            textAlign: 'justify',
-            marginTop: 5,
-            fontWeight: '400',
-            color: '#341f4d',
+        <TouchableOpacity
+          onPress={() => {
+            Alert.alert(`you have ${stocks} unit left`, 'See details.', [
+              {
+                text: 'OK',
+                onPress: () =>
+                  navigation.navigate('ProductInfo', {id: productId}),
+              },
+            ]);
           }}>
-          {stocks} Unit
-        </Text>
+          <Text
+            style={{
+              fontSize: 15,
+              color: '#000',
+              textAlign: 'justify',
+              marginTop: 5,
+              fontWeight: '400',
+              color: '#341f4d',
+            }}>
+            {stocks} Unit
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

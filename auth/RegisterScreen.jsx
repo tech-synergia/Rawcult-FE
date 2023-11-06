@@ -13,6 +13,12 @@ import {
 import {RadioButton} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {
+  GoogleSignin,
+  statusCodes,
+  GoogleSigninButton,
+} from '@react-native-google-signin/google-signin';
 
 import axios from 'axios';
 
@@ -27,13 +33,36 @@ const RegisterScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [role, setRole] = useState('');
-  const openGmail = () => {
-    const UserEmail = `mailto:${email}`;
-    Linking.openURL(UserEmail);
-  };
-  const handleSelectOption = value => {
-    setRole(value);
-  };
+
+  GoogleSignin.configure({
+    webClientId:
+      '754633465153-vi41osv7hr95kej2qjhu1kvifiqhr41q.apps.googleusercontent.com',
+  });
+
+  async function onGoogleButtonPress() {
+    try {
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      // Get the users ID token
+      const {idToken} = await GoogleSignin.signIn();
+      console.log({idToken});
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign-in the user with the credential
+      return auth().signInWithCredential(googleCredential);
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        console.log(error.message);
+        // some other error happened
+      }
+    }
+  }
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -68,10 +97,8 @@ const RegisterScreen = ({navigation}) => {
     navigation.navigate('Signin');
   };
   return (
-    <LinearGradient
-      colors={['#ff66c4', '#5170ff']} // Array of gradient colors
-      start={{x: 0, y: 0}} // Start point of the gradient
-      end={{x: 1, y: 0}} // End point of the gradient
+    <View
+      // End point of the gradient
       style={styles.container}>
       <Text style={styles.logo}>Welcome to Rawcult</Text>
       <Text
@@ -81,7 +108,7 @@ const RegisterScreen = ({navigation}) => {
           marginBottom: 20,
           fontSize: 15,
           fontWeight: '500',
-          color: '#6e6d70',
+          color: '#ccc',
         }}>
         Fill the information below to Register.
       </Text>
@@ -91,19 +118,19 @@ const RegisterScreen = ({navigation}) => {
           fontWeight: '500',
           marginBottom: 5,
           alignSelf: 'flex-start',
-          color: '#6e6d70',
+          color: '#fff',
           marginTop: 10,
         }}>
-        Who you are:
+        Select your role:
       </Text>
       <View style={{width: '55%', marginBottom: -10}}>
         <RadioButton.Group onValueChange={value => setRole(value)} value={role}>
           <View style={styles.radioButtonContainer}>
-            <RadioButton value="manufacturer" color="#ccc" />
+            <RadioButton value="manufacturer" color="#fff" />
             <Text style={styles.radioButtonLabel}>Manufacturer</Text>
           </View>
           <View style={styles.radioButtonContainer}>
-            <RadioButton value="retailer" color="#ccc" />
+            <RadioButton value="retailer" color="#fff" />
             <Text style={styles.radioButtonLabel}>Retailer</Text>
           </View>
         </RadioButton.Group>
@@ -213,13 +240,14 @@ const RegisterScreen = ({navigation}) => {
         </TouchableOpacity>
       </View> */}
       <TouchableOpacity style={styles.loginButton} onPress={handleSignup}>
+        <FontAwesome name="user-plus" size={22} color={'#000'} />
         <Text style={styles.loginButtonText}>Register</Text>
       </TouchableOpacity>
       <View style={{display: 'flex', flexDirection: 'row'}}>
         <Text
           style={{
             marginTop: 15,
-            color: 'grey',
+            color: '#ccc',
             fontSize: 15,
             fontWeight: 'bold',
           }}>
@@ -237,27 +265,19 @@ const RegisterScreen = ({navigation}) => {
       {/* Facebook Login */}
       <View style={styles.socialIconsContainer}>
         <TouchableOpacity>
-          <View
-            style={{
-              height: 'auto',
-              width: 'auto',
-              borderRadius: 10,
-              backgroundColor: '#F7E4E1',
-              display: 'flex',
-              flexDirection: 'row',
-            }}>
-            <Ionicons
-              name="logo-google"
-              size={25}
-              color="#DB4437"
-              style={styles.socialIcon}
-              onPress={() => {
-                // Implement your Google login logic here
-              }}
+          <View>
+            <GoogleSigninButton
+              onPress={() =>
+                onGoogleButtonPress()
+                  .then(() => {
+                    console.log('user signed in using google');
+                    navigation.navigate('ReatilerHome');
+                  })
+                  .catch(error => {
+                    console.log(error);
+                  })
+              }
             />
-            <Text style={{marginTop: 15, marginRight: 15}}>
-              Continue with Google
-            </Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -272,7 +292,7 @@ const RegisterScreen = ({navigation}) => {
           }}>
           <Text
             style={{
-              color: 'grey',
+              color: '#ccc',
               fontSize: 17,
               fontWeight: '500',
               textDecorationLine: 'underline',
@@ -281,7 +301,7 @@ const RegisterScreen = ({navigation}) => {
           </Text>
         </View>
       </TouchableOpacity>
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -290,7 +310,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#006DFF',
     paddingHorizontal: 20,
   },
   logo: {
@@ -314,25 +334,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
     backgroundColor: '#fff',
+    borderColor: '#fff',
   },
   loginButton: {
     width: '80%',
     height: 50,
-    backgroundColor: '#966dc9',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
+    marginTop: 30,
+    flexDirection: 'row',
   },
   loginButtonText: {
-    color: '#fff',
+    color: '#000',
     fontSize: 18,
     fontWeight: 'bold',
+    marginLeft: 5,
   },
   createAccountButton: {
     marginTop: 15,
   },
   createAccountText: {
-    color: '#007bff',
+    color: '#ccc',
     fontSize: 15,
     fontWeight: '500',
     textDecorationLine: 'underline',
@@ -378,6 +402,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 15,
     backgroundColor: '#fff',
+    borderColor: '#fff',
   },
   passwordInput: {
     flex: 1,
@@ -403,12 +428,13 @@ const styles = StyleSheet.create({
   radioButtonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    color: '#ccc',
     // marginBottom: 10,
   },
   radioButtonLabel: {
     marginLeft: 8,
     fontSize: 16,
-    color: '#ccc',
+    color: '#fff',
   },
 });
 

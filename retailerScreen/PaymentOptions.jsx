@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -41,14 +41,15 @@ export default function PaymentOptions({navigation}) {
           fontSize: 18,
           fontWeight: 'bold',
           color: '#575957',
-          textAlign: 'justify',
-          height: 25,
-          width: '100%',
           marginBottom: 5,
           marginLeft: 20,
         }}>
-        Select Payment Options:
+        You can do the payment through scanning the below scanner:
       </Text>
+      <Image
+        style={{height: 400, width: 300, alignSelf: 'center', marginTop: 20}}
+        source={require('../assets/scanner.jpeg')}
+      />
     </View>
   );
 }

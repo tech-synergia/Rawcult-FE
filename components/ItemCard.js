@@ -44,6 +44,7 @@ const ItemCard = ({image, product_name, product_price, productId}) => {
   return (
     <View
       style={{
+        // backgroundColor: 'red',
         height: 'auto',
         padding: 15,
         width: 160,
@@ -52,7 +53,10 @@ const ItemCard = ({image, product_name, product_price, productId}) => {
         borderColor: '#c2c3c4',
         borderWidth: 1,
         borderRadius: 5,
-        // justifyContent: "center",
+        shadowColor: '#171717',
+        shadowOffset: {width: -2, height: 4},
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
         // alignItems: "center",
         margin: 18,
       }}>

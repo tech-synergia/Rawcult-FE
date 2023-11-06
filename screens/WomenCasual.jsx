@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, TouchableOpacity, ScrollView, Alert} from 'react-native';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CategoriesCard from '../components/CategoriesCard';
@@ -7,13 +7,13 @@ import {useEffect} from 'react';
 import {useState} from 'react';
 
 export default function WomenCasual({navigation}) {
-  const [womenTopData, setWomenTopData] = useState([]);
+  const [womenCasualData, setWomenCasualData] = useState([]);
   const image8 = require('../assets/womenBottom.webp');
 
-  const WomenTopWearData = async () => {
+  const WomenCasualWearData = async () => {
     const categoryData = {
       category: 'womens wear',
-      subCategory: 'bottom wear',
+      subCategory: 'sports wear',
     };
 
     try {
@@ -22,18 +22,18 @@ export default function WomenCasual({navigation}) {
         categoryData,
       );
       if (response.status === 200 || 201) {
-        setWomenTopData(response?.data?.product);
+        setWomenCasualData(response?.data?.product);
       } else {
         // Show error message
         Alert.alert('Error', 'Something Went Wrong!');
       }
     } catch (error) {
-      Alert.alert('Error', error.response.data.msg);
+      Alert.alert('Error', error?.response?.data?.msg);
     }
   };
 
   useEffect(() => {
-    WomenTopWearData();
+    WomenCasualWearData();
   });
 
   return (
@@ -56,7 +56,7 @@ export default function WomenCasual({navigation}) {
           width: '100%',
           marginBottom: 10,
         }}>
-        WOMEN'S CASUAL WEAR ({womenTopData?.length})
+        WOMEN'S CASUAL WEAR ({womenCasualData?.length})
       </Text>
       <View
         style={{
@@ -68,15 +68,22 @@ export default function WomenCasual({navigation}) {
         }}
       />
       <ScrollView>
-        {womenTopData.map((item, index) => (
-          <CategoriesCard
-            key={index}
-            name={item?.name}
-            price={Number(item?.price).toFixed(2)}
-            image={image8}
-            productId={item?._id}
-          />
-        ))}
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '100%',
+            flexWrap: 'wrap',
+          }}>
+          {womenCasualData.map((item, index) => (
+            <CategoriesCard
+              key={index}
+              name={item?.name}
+              price={Number(item?.price).toFixed(2)}
+              image={{uri: item?.image[0]}}
+              productId={item?._id}
+            />
+          ))}
+        </View>
       </ScrollView>
     </View>
   );

@@ -1,9 +1,18 @@
-import {View, Text} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import React from 'react';
 
-const AboutUs = () => {
+const Privacy = ({navigation}) => {
   return (
     <View style={{marginTop: 20, marginBottom: 45}}>
+      <TouchableOpacity onPress={() => navigation.navigate('MfHome')}>
+        <Ionicons
+          style={{marginLeft: 5}}
+          name="arrow-back"
+          size={35}
+          color={'#14489c'}
+        />
+      </TouchableOpacity>
       <Text
         style={{
           fontSize: 18,
@@ -13,8 +22,9 @@ const AboutUs = () => {
           height: 25,
           width: '100%',
           marginBottom: 5,
+          marginTop: -15,
         }}>
-        ABOUT US
+        PRIVACY POLICY
       </Text>
       <View
         style={{
@@ -30,4 +40,4 @@ const AboutUs = () => {
   );
 };
 
-export default AboutUs;
+export default Privacy;

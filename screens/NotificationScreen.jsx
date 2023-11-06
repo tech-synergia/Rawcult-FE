@@ -13,6 +13,7 @@ export default function NotificationScreen({navigation}) {
       setLOginToken(token);
     })();
   }, []);
+
   return (
     <View>
       <TouchableOpacity onPress={() => navigation.navigate('ReatilerHome')}>
@@ -55,7 +56,7 @@ export default function NotificationScreen({navigation}) {
             style={{alignSelf: 'center', marginBottom: 20}}
             name="notification"
             size={60}
-            color={'#6b32a8'}
+            color={'#006DFF'}
           />
           <Text
             style={{
@@ -82,7 +83,7 @@ export default function NotificationScreen({navigation}) {
               width: 150,
               height: 50,
               marginLeft: 120,
-              backgroundColor: '#5361f5',
+              backgroundColor: '#006DFF',
               justifyContent: 'center',
               alignItems: 'center',
               borderRadius: 5,

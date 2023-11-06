@@ -1,4 +1,4 @@
-import {View, Text, SafeAreaView, ImageBackground} from 'react-native';
+import {View, Text, SafeAreaView, ImageBackground, Alert} from 'react-native';
 import React from 'react';
 import {Button, Card} from 'react-native-paper';
 
@@ -10,11 +10,17 @@ const WaitingApprovalScreen = ({navigation}) => {
     // Implement navigation to the Create Account screen here
     // Example: navigation.navigate('CreateAccount');
   };
+  const handleEdit = () => {
+    // navigation.navigate("Signin");
+    // navigation.navigate('');
+    Alert.alert("Can't edit for now!");
+
+    // Implement navigation to the Create Account screen here
+    // Example: navigation.navigate('CreateAccount');
+  };
   return (
     <SafeAreaView style={{height: '100%'}}>
-      <ImageBackground
-        style={{width: '100%', height: '100%'}}
-        source={require('../assets/formBack.jpeg')}>
+      <View style={{width: '100%', height: '100%', backgroundColor: '006DFF'}}>
         <Card style={{margin: 20, marginTop: 180}}>
           <Card.Cover source={require('../assets/saved.png')} />
           <Card.Content>
@@ -34,9 +40,10 @@ const WaitingApprovalScreen = ({navigation}) => {
           </Card.Content>
           <Card.Actions style={{alignSelf: 'center'}}>
             <Button onPress={handleOk}>Ok</Button>
+            <Button onPress={handleEdit}>Edit</Button>
           </Card.Actions>
         </Card>
-      </ImageBackground>
+      </View>
     </SafeAreaView>
   );
 };

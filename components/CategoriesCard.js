@@ -46,12 +46,13 @@ const CategoriesCard = ({image, name, price, productId}) => {
       style={{
         height: 'auto',
         padding: 15,
-        width: 180,
+        width: '40%',
         height: 'auto',
         display: 'flex',
         borderColor: '#c2c3c4',
         borderWidth: 1,
         borderRadius: 5,
+
         // justifyContent: "center",
         // alignItems: "center",
         margin: 18,
@@ -62,8 +63,8 @@ const CategoriesCard = ({image, name, price, productId}) => {
           onPress={() => navigation.navigate('ProductDetail', {id: productId})}>
           <Image
             style={{
-              width: 180,
-              height: 230,
+              width: 165,
+              height: 200,
               alignSelf: 'center',
               marginTop: -15,
             }}
@@ -80,7 +81,7 @@ const CategoriesCard = ({image, name, price, productId}) => {
             <Ionicons
               name={isLiked ? 'heart' : 'heart-outline'}
               size={30}
-              color={isLiked ? 'red' : 'black'}
+              color={isLiked ? 'red' : '#fff'}
             />
           </TouchableOpacity>
           <View style={styles.centeredView}>

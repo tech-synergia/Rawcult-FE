@@ -68,15 +68,22 @@ export default function MenAccessories({navigation}) {
         }}
       />
       <ScrollView>
-        {womenTopData.map((item, index) => (
-          <CategoriesCard
-            key={index}
-            name={item?.name}
-            price={Number(item?.price).toFixed(2)}
-            image={image8}
-            productId={item?._id}
-          />
-        ))}
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '100%',
+            flexWrap: 'wrap',
+          }}>
+          {womenTopData.map((item, index) => (
+            <CategoriesCard
+              key={index}
+              name={item?.name}
+              price={Number(item?.price).toFixed(2)}
+              image={{uri: item?.image[0]}}
+              productId={item?._id}
+            />
+          ))}
+        </View>
       </ScrollView>
     </View>
   );

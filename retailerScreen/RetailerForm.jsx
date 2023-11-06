@@ -63,16 +63,12 @@ const RetailerForm = ({navigation}) => {
         Alert.alert(response.data.msg);
       }
     } catch (error) {
-      Alert.alert('Error', error);
+      Alert.alert('Error', error?.response?.data?.msg);
     }
   };
 
   return (
-    <LinearGradient
-      colors={['#b151e8', '#30044a']} // Array of gradient colors
-      start={{x: 0, y: 0}} // Start point of the gradient
-      end={{x: 1, y: 0}} // End point of the gradient
-      style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: '#006DFF'}}>
       <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
         <Ionicons
           style={{marginLeft: 10}}
@@ -116,10 +112,10 @@ const RetailerForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 20,
             }}>
-            Your Name
+            Your Name <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -135,9 +131,10 @@ const RetailerForm = ({navigation}) => {
               marginBottom: 5,
               alignSelf: 'flex-start',
               marginTop: 10,
-              color: '#000',
+              color: '#fff',
             }}>
-            Your Shop/Retailer Unit Name
+            Your Shop/Retailer Unit Name{' '}
+            <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -152,10 +149,11 @@ const RetailerForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Your Unit Address
+            Your Unit Address{' '}
+            <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -170,10 +168,10 @@ const RetailerForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Phone Number
+            Phone Number <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -189,10 +187,11 @@ const RetailerForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Your Email Address
+            Your Email Address{' '}
+            <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -208,7 +207,7 @@ const RetailerForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
             Your GST Number
@@ -226,10 +225,11 @@ const RetailerForm = ({navigation}) => {
               fontWeight: '500',
               marginBottom: 5,
               alignSelf: 'flex-start',
-              color: '#000',
+              color: '#fff',
               marginTop: 10,
             }}>
-            Your Aadhar/PAN Card Number
+            Your Aadhar/PAN Card Number{' '}
+            <Text style={{color: 'red', fontSize: 20}}>*</Text>
           </Text>
           <TextInput
             style={styles.input}
@@ -239,14 +239,12 @@ const RetailerForm = ({navigation}) => {
             value={aadhaarOrPan}
           />
 
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText} onPress={handleSubmit}>
-              Submit
-            </Text>
+          <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
+            <Text style={styles.loginButtonText}>Submit</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 };
 

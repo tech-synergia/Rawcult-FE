@@ -13,6 +13,8 @@ import com.gotomamma.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.airbnb.android.react.lottie.LottiePackage;
+import com.wix.reactnativenotifications.RNNotificationsPackage;
+
 
 
 public class MainApplication extends Application implements ReactApplication {
